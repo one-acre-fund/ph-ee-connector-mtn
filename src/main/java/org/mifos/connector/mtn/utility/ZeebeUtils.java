@@ -6,7 +6,7 @@ package org.mifos.connector.mtn.utility;
 public class ZeebeUtils {
 
     /**
-     * takes initial timer in the ISO 8601 durations format for more info check
+     * Takes initial timer in the ISO 8601 durations format for more info check.
      * https://docs.camunda.io/docs/0.26/reference/bpmn-workflows/timer-events/#time-duration
      *
      * @param initialTimer
