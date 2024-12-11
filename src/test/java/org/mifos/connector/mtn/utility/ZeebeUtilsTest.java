@@ -1,7 +1,6 @@
 package org.mifos.connector.mtn.utility;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
@@ -15,7 +14,7 @@ class ZeebeUtilsTest extends MtnConnectorApplicationTests {
 
         String nextTimer = ZeebeUtils.getNextTimer(initialTimer);
 
-        assertEquals("PT64S", nextTimer);
+        Assertions.assertEquals("PT64S", nextTimer);
     }
 
     @DisplayName("Handle initial timer with value 'PT1S' (smallest valid input)")
@@ -25,7 +24,7 @@ class ZeebeUtilsTest extends MtnConnectorApplicationTests {
 
         String nextTimer = ZeebeUtils.getNextTimer(initialTimer);
 
-        assertEquals("PT2S", nextTimer);
+        Assertions.assertEquals("PT2S", nextTimer);
     }
 
 }

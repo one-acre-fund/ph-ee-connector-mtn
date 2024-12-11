@@ -1,7 +1,6 @@
 package org.mifos.connector.mtn.dto;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
@@ -16,8 +15,8 @@ class PayerTest extends MtnConnectorApplicationTests {
 
         Payer payer = new Payer(partyIdType, partyId);
 
-        assertEquals(partyIdType, payer.getPartyIdType());
-        assertEquals(partyId, payer.getPartyId());
+        Assertions.assertEquals(partyIdType, payer.getPartyIdType());
+        Assertions.assertEquals(partyId, payer.getPartyId());
     }
 
     @DisplayName("Create Payer with null values for both fields")
@@ -25,8 +24,8 @@ class PayerTest extends MtnConnectorApplicationTests {
     void test_create_payer_with_null_values() {
         Payer payer = new Payer(null, null);
 
-        assertNull(payer.getPartyIdType());
-        assertNull(payer.getPartyId());
+        Assertions.assertNull(payer.getPartyIdType());
+        Assertions.assertNull(payer.getPartyId());
     }
 
     @DisplayName("Returns formatted string with both partyIdType and partyId values")
@@ -36,7 +35,7 @@ class PayerTest extends MtnConnectorApplicationTests {
 
         String result = payer.toString();
 
-        assertEquals("Payer{partyIdType='MSISDN', partyId='123456789'}", result);
+        Assertions.assertEquals("Payer{partyIdType='MSISDN', partyId='123456789'}", result);
     }
 
     @DisplayName("Handles null values for partyIdType")
@@ -46,7 +45,7 @@ class PayerTest extends MtnConnectorApplicationTests {
 
         String result = payer.toString();
 
-        assertEquals("Payer{partyIdType='null', partyId='123456789'}", result);
+        Assertions.assertEquals("Payer{partyIdType='null', partyId='123456789'}", result);
     }
 
 }

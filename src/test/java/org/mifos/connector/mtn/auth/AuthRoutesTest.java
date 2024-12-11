@@ -1,9 +1,10 @@
 package org.mifos.connector.mtn.auth;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import org.apache.camel.FluentProducerTemplate;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
@@ -36,7 +37,7 @@ class AuthRoutesTest extends MtnConnectorApplicationTests {
         LocalDateTime expectedExpirationTime = LocalDateTime.now().plusSeconds(3600);
 
         // Assertions
-        assertEquals("test-access-token", accessTokenStore.getAccessToken());
+        Assertions.assertEquals("test-access-token", accessTokenStore.getAccessToken());
         assertTrue(
                 !actualExpirationTime.isBefore(expectedExpirationTime.minusSeconds(5))
                         && !actualExpirationTime.isAfter(expectedExpirationTime.plusSeconds(5)),

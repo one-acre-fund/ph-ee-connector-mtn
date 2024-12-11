@@ -1,8 +1,9 @@
 package org.mifos.connector.mtn.auth;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
@@ -19,7 +20,7 @@ class AccessTokenStoreTest extends MtnConnectorApplicationTests {
 
         String retrievedToken = tokenStore.getAccessToken();
 
-        assertEquals(testToken, retrievedToken);
+        Assertions.assertEquals(testToken, retrievedToken);
     }
 
     @DisplayName("Check token validity with null datetime parameter")
@@ -41,8 +42,8 @@ class AccessTokenStoreTest extends MtnConnectorApplicationTests {
 
         boolean isValid = tokenStore.isValid(testTime);
 
-        assertTrue(isValid);
-        assertEquals(tokenStore.getExpiresOn(), tokenStore.expiresOn);
+        Assertions.assertTrue(isValid);
+        Assertions.assertEquals(tokenStore.getExpiresOn(), tokenStore.expiresOn);
     }
 
     @DisplayName("Return false when input datetime is after expiration time")
@@ -54,6 +55,6 @@ class AccessTokenStoreTest extends MtnConnectorApplicationTests {
 
         boolean isValid = tokenStore.isValid(testTime);
 
-        assertFalse(isValid);
+        Assertions.assertFalse(isValid);
     }
 }

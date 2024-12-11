@@ -2,12 +2,24 @@ package org.mifos.connector.mtn.camel.routes;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mifos.connector.mtn.camel.config.CamelProperties.*;
-import static org.mifos.connector.mtn.zeebe.ZeebeVariables.*;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.ACCESS_TOKEN;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.BUY_GOODS_REQUEST_BODY;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.ERROR_DESCRIPTION;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.IS_RETRY_EXCEEDED;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.IS_TRANSACTION_PENDING;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.LAST_RESPONSE_BODY;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CALLBACK_RECEIVED;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.FINANCIAL_TRANSACTION_ID;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.SERVER_TRANSACTION_STATUS_RETRY_COUNT;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_FAILED;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
@@ -72,7 +84,8 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
     @Value("${mtn.api.timeout}")
     private Integer mtnTimeout;
 
-    @DisplayName("Test initiate payment flow and retrieve access token, and sends it to the transaction response handler")
+    @DisplayName("Test initiate payment flow and retrieve access token, and sends it to the transaction "
+            + "response handler")
     @Test
     void test_initiate_payment_flow_and_retrieve_access_token_sends_token_to_the_handler() throws Exception {
 
@@ -264,8 +277,7 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
         // Set properties
         Exchange exchange = camelContext.getEndpoint("direct:mtn-get-transaction-status-base").createExchange();
         exchange.setProperty(SERVER_TRANSACTION_STATUS_RETRY_COUNT, 2);
-        fluentProducerTemplate.to("direct:mtn-get-transaction-status-base").withExchange(exchange) // Retry within limit
-                .send();
+        fluentProducerTemplate.to("direct:mtn-get-transaction-status-base").withExchange(exchange).send();
 
         // Assertions
         mockGetAccessToken.assertIsSatisfied();
@@ -290,8 +302,7 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
         // Set properties
         Exchange exchange = camelContext.getEndpoint("direct:mtn-get-transaction-status-base").createExchange();
         exchange.setProperty(SERVER_TRANSACTION_STATUS_RETRY_COUNT, 5);
-        fluentProducerTemplate.to("direct:mtn-get-transaction-status-base").withExchange(exchange) // Retry exceeded
-                .send();
+        fluentProducerTemplate.to("direct:mtn-get-transaction-status-base").withExchange(exchange).send();
 
         // Assertions
         mockTransactionStatusFailureProcessor.assertIsSatisfied();
