@@ -81,7 +81,8 @@ public class MtnRouteBuilder extends RouteBuilder {
          * [X-Callback-Url] [Ocp-Apim-Subscription-Key] [X-Target-Environment] are set in runtime and request is
          * forwarded to MTN endpoint.
          */
-        from("direct:request-to-pay").removeHeader("*").setHeader(Exchange.HTTP_METHOD, constant("POST"))
+        from("direct:request-to-pay").id("request-to-pay").removeHeader("*")
+                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader("Content-Type", constant("application/json"))
                 .setHeader("Ocp-Apim-Subscription-Key", constant(mtnProps.getSubscriptionKey()))
                 .setHeader("X-Callback-Url", constant(mtnProps.getCallBack()))
@@ -102,12 +103,13 @@ public class MtnRouteBuilder extends RouteBuilder {
         from("direct:mtn-transaction-response-handler").id("mtn-transaction-response-handler").choice()
                 .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("202"))
                 .log(LoggingLevel.INFO, "MTN Collection request successful").process(transactionResponseProcessor)
-                .otherwise().log(LoggingLevel.ERROR, "MTN Collection request unsuccessful").process(exchange -> {
+                .id("success-processor").otherwise().log(LoggingLevel.ERROR, "MTN Collection request unsuccessful")
+                .process(exchange -> {
                     logger.error("Body: " + exchange.getIn().getBody(String.class));
                     logger.error("Header: " + exchange.getIn().getHeaders().toString());
                     // TODO: Deal with server ID
                 }).log(LoggingLevel.ERROR, Exchange.HTTP_RESPONSE_TEXT).setProperty(TRANSACTION_FAILED, constant(true))
-                .process(transactionResponseProcessor);
+                .process(transactionResponseProcessor).id("failure-processor");
 
         /*
          * Use this endpoint for receiving the callback from MTN endpoint
@@ -132,7 +134,8 @@ public class MtnRouteBuilder extends RouteBuilder {
                         exchange.setProperty(TRANSACTION_FAILED, true);
                         // TODO: SAVE ERROR CODE AND INFO
                     }
-                }).log(LoggingLevel.INFO, "After Handling callback body").process(collectionResponseProcessor);
+                }).log(LoggingLevel.INFO, "After Handling callback body").process(collectionResponseProcessor)
+                .id("callback-processor");
 
         /*
          * Starts the payment flow
@@ -151,12 +154,13 @@ public class MtnRouteBuilder extends RouteBuilder {
                 .to("direct:mtn-transaction-status-response-handler").otherwise().process(exchange -> {
                     exchange.setProperty(IS_RETRY_EXCEEDED, true);
                     exchange.setProperty(TRANSACTION_FAILED, true);
-                }).process(collectionResponseProcessor);
+                }).process(collectionResponseProcessor).id("mtn-transaction-status-failure-processor");
 
         /*
          * Takes the request for transaction status and forwards in to the mtn transaction status endpoint
          */
-        from("direct:mtn-transaction-status").removeHeader("*").setHeader(Exchange.HTTP_METHOD, constant("GET"))
+        from("direct:mtn-transaction-status").id("mtn-transaction-status").removeHeader("*")
+                .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setHeader("Content-Type", constant("application/json"))
                 .setHeader("Ocp-Apim-Subscription-Key", constant(mtnProps.getSubscriptionKey()))
                 .setHeader("X-Reference-Id", simple("${exchangeProperty." + CORRELATION_ID + "}"))
@@ -191,10 +195,11 @@ public class MtnRouteBuilder extends RouteBuilder {
                         exchange.setProperty(ERROR_INFORMATION, exchange.getIn().getBody(String.class));
                         exchange.setProperty(TRANSACTION_FAILED, true);
                     }
-                }).process(collectionResponseProcessor).otherwise()
+                }).process(collectionResponseProcessor).id("successful-processing").otherwise()
                 .log(LoggingLevel.ERROR, "Transaction status request unsuccessful").process(exchange -> {
                     logger.error("Body:" + exchange.getIn().getBody(String.class));
                     logger.error("Header:" + exchange.getIn().getHeaders().toString());
-                }).setProperty(TRANSACTION_FAILED, constant(true)).process(collectionResponseProcessor);
+                }).setProperty(TRANSACTION_FAILED, constant(true)).process(collectionResponseProcessor)
+                .id("unsuccessful-processing");
     }
 }
