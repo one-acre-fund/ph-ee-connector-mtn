@@ -76,11 +76,11 @@ class CollectionResponseProcessorTest extends MtnConnectorApplicationTests {
         exchange.setProperty(TRANSACTION_FAILED, true);
         exchange.setProperty(ERROR_INFORMATION, "Wrong PIN entered");
 
-        PublishMessageCommandStep1.PublishMessageCommandStep3 publishMessageCommandStep3 = mockPublishMessageCommandStep3();
+        PublishMessageCommandStep1.PublishMessageCommandStep3 commandStep3 = mockPublishMessageCommandStep3();
         processor.process(exchange);
 
         ArgumentCaptor<Map<String, Object>> variablesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(publishMessageCommandStep3).variables(variablesCaptor.capture());
+        verify(commandStep3).variables(variablesCaptor.capture());
 
         // Retrieve the captured map
         Map<String, Object> capturedVariables = variablesCaptor.getValue();
@@ -108,11 +108,11 @@ class CollectionResponseProcessorTest extends MtnConnectorApplicationTests {
         exchange.setProperty(CORRELATION_ID, 12345);
         exchange.setProperty(FINANCIAL_TRANSACTION_ID, "9786182098");
 
-        PublishMessageCommandStep1.PublishMessageCommandStep3 publishMessageCommandStep3 = mockPublishMessageCommandStep3();
+        PublishMessageCommandStep1.PublishMessageCommandStep3 commandStep3 = mockPublishMessageCommandStep3();
         processor.process(exchange);
 
         ArgumentCaptor<Map<String, Object>> variablesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(publishMessageCommandStep3).variables(variablesCaptor.capture());
+        verify(commandStep3).variables(variablesCaptor.capture());
 
         // Retrieve the captured map
         Map<String, Object> capturedVariables = variablesCaptor.getValue();

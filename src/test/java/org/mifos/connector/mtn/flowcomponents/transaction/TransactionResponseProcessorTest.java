@@ -1,10 +1,10 @@
 package org.mifos.connector.mtn.flowcomponents.transaction;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_FAILED;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
@@ -26,7 +26,7 @@ class TransactionResponseProcessorTest extends MtnConnectorApplicationTests {
 
         processor.process(exchange);
 
-        assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
+        Assertions.assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
     }
 
     @DisplayName("Process exchange with TRANSACTION_FAILED property null")
@@ -40,7 +40,7 @@ class TransactionResponseProcessorTest extends MtnConnectorApplicationTests {
 
         processor.process(exchange);
 
-        assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
+        Assertions.assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
     }
 
     @DisplayName("Process exchange with TRANSACTION_FAILED property not set")
@@ -52,7 +52,7 @@ class TransactionResponseProcessorTest extends MtnConnectorApplicationTests {
 
         processor.process(exchange);
 
-        assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
+        Assertions.assertFalse((Boolean) exchange.getProperty(TRANSACTION_FAILED));
     }
 
     @DisplayName("Process exchange with TRANSACTION_FAILED property set to true")
@@ -66,7 +66,7 @@ class TransactionResponseProcessorTest extends MtnConnectorApplicationTests {
 
         processor.process(exchange);
 
-        assertTrue((Boolean) exchange.getProperty(TRANSACTION_FAILED));
+        Assertions.assertTrue((Boolean) exchange.getProperty(TRANSACTION_FAILED));
     }
 
 }
