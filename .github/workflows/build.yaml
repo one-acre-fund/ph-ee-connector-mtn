@@ -28,8 +28,9 @@ jobs:
 
       - name: Generate image tags
         run: |
-          VERSION_TAG=`git describe --abbrev=0 --tags`
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then IMAGE_TAGS="$IMAGE_TAGS,latest"; fi
+          VERSION_TAG=$(./gradlew -q printVersion)
+          IMAGE_TAGS="${VERSION_TAG}.$(date '+%Y.%m.%d').${REVISION}"
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then IMAGE_TAGS="$VERSION_TAG",latest; fi
           echo "IMAGE_TAGS=$IMAGE_TAGS" >> $GITHUB_ENV
 
       - name: GitGuardian scan

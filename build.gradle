@@ -6,6 +6,7 @@ plugins {
     id 'jacoco'
 }
 group = 'org.mifos.connector'
+version = '1.0.5'
 sourceCompatibility = '17'
 def camelCoreVersion = '3.12.0'
 repositories {
@@ -115,4 +116,10 @@ jacocoTestReport {
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+}
+
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
 }
