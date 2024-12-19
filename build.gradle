@@ -123,3 +123,7 @@ tasks.register('printVersion') {
         println project.version
     }
 }
+bootJar {
+    // Ensure that the version is excluded from the jar name, so the Dockerfile doesn't break.
+    archiveVersion = ''
+}
