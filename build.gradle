@@ -117,7 +117,6 @@ tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
-
 tasks.register('printVersion') {
     doLast {
         println project.version
