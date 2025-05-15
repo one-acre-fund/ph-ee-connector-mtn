@@ -6,6 +6,7 @@ plugins {
     id 'jacoco'
 }
 group = 'org.mifos.connector'
+version = '1.1.0'
 sourceCompatibility = '17'
 def camelCoreVersion = '3.12.0'
 repositories {
@@ -117,4 +118,14 @@ jacocoTestReport {
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+}
+
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
+}
+bootJar {
+    // Ensure that the version is excluded from the jar name, so the Dockerfile doesn't break.
+    archiveVersion = ''
 }
