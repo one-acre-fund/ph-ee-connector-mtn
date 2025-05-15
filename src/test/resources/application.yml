@@ -42,3 +42,18 @@ management:
     health:
       probes:
         enabled: true
+
+
+channel:
+  host: "http://localhost:8085/channel"
+
+paybill:
+  account-holding-institution-id: oaf
+  timer: "PT45S"
+  ams-name: fineract
+  ams-url: http://localhost:8085/ams
+  ams-identifier: FINERACTACCOUNTID
+  currency: RWF
+  paymentCompletedUrl: "http://localhost:8085/paymentcompleted"
+  username: "user"
+  password: "pass"
