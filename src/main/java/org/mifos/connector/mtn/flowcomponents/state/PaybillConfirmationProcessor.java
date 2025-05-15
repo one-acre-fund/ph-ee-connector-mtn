@@ -74,6 +74,7 @@ public class PaybillConfirmationProcessor implements Processor {
         } else {
             workflowTransactionId = MtnUtils.generateWorkflowId();
             variables.put(CLIENT_CORRELATION_ID, workflowTransactionId);
+            variables.put(CORRELATION_ID, workflowTransactionId);
             variables.put(ORIGIN_DATE, Instant.now().toEpochMilli());
             variables.put(CONFIRMATION_TIMER, paybillProps.getTimer());
             variables.put(PARTY_LOOKUP_FAILED, paymentRequest.getOafReference() == null);

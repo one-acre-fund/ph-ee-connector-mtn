@@ -27,6 +27,6 @@ public class ZeebeVariables {
     public static final String TRANSFER_CREATE_FAILED = "transferCreateFailed";
     public static final String PENDING_CONFIRMATION_MESSAGE_NAME = "pendingMtnConfirmation";
     public static final String TRANSFER_SETTLEMENT_FAILED = "transferSettlementFailed";
-    public static final String MTN_PAYMENT_COMPLETED = "mtnPaymentCompletionCompleted";
+    public static final String MTN_PAYMENT_COMPLETED = "mtnPaymentCompleted";
     public static final String MTN_PAYMENT_COMPLETION_RESPONSE = "mtnPaymentCompletionResponse";
 }
