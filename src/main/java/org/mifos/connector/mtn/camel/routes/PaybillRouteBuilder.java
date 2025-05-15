@@ -120,14 +120,14 @@ public class PaybillRouteBuilder extends RouteBuilder {
                 .to("direct:paybill-validation-response-failure").end();
 
         from("direct:account-status").id("account-status").setBody(exchange -> {
-            FinancialResourceInformationRequest request = exchange.getIn()
-                    .getBody(FinancialResourceInformationRequest.class);
             exchange.getIn().removeHeaders("*");
             exchange.getIn().setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             exchange.getIn().setHeader(AMS_URL, paybillProps.getAmsUrl());
             exchange.getIn().setHeader(AMS_NAME, paybillProps.getAmsName());
             exchange.getIn().setHeader(ACCOUNT_HOLDING_INSTITUTION_ID, paybillProps.getAccountHoldingInstitutionId());
             exchange.setProperty(PRIMARY_IDENTIFIER, paybillProps.getAmsIdentifier());
+            FinancialResourceInformationRequest request = exchange.getIn()
+                    .getBody(FinancialResourceInformationRequest.class);
             exchange.setProperty(PRIMARY_IDENTIFIER_VALUE, request.getResource());
             return ChannelValidationRequest.fromPaybillValidation(request, paybillProps,
                     exchange.getProperty(TRANSACTION_ID, String.class));
@@ -241,13 +241,14 @@ public class PaybillRouteBuilder extends RouteBuilder {
             Boolean settlementFailed = exchange.getProperty(TRANSFER_SETTLEMENT_FAILED, Boolean.class);
             request.setStatus(Boolean.FALSE.equals(settlementFailed) ? "COMPLETED" : "FAILED");
             return request;
-        }).log("Sending mtn payment completed request with transaction id: ${exchangeProperty.transactionId}, body: ${body} ")
-                .setHeader(CONTENT_TYPE, constant(MediaType.APPLICATION_XML_VALUE))
+        }).log("Sending mtn payment completed request with transaction id: ${exchangeProperty.transactionId}, "
+                + "body: ${body} ").setHeader(CONTENT_TYPE, constant(MediaType.APPLICATION_XML_VALUE))
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .toD(paybillProps.getPaymentCompletedUrl() + BRIDGE_ENDPOINT_QUERY_PARAM + "&"
                         + ConnectionUtils.getConnectionTimeoutDsl(mtnTimeout) + "&authUsername="
                         + paybillProps.getUsername() + "&authPassword=" + paybillProps.getPassword())
-                .log("Received payment completed response ${header.CamelHttpResponseCode} for transaction ${header.transactionId}: ${body}")
+                .log("Received payment completed response ${header.CamelHttpResponseCode} for transaction"
+                        + " ${header.transactionId}: ${body}")
                 .setProperty(MTN_PAYMENT_COMPLETION_RESPONSE, simple("${body}")).process(exchange -> {
                     try {
                         PaymentCompletedResponse response = exchange.getIn().getBody(PaymentCompletedResponse.class);

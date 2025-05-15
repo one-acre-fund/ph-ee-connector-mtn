@@ -19,6 +19,9 @@ public class FinancialResourceInformationResponse {
     private String message;
     private Extension extension;
 
+    /**
+     * Extension class representing additional information in the response.
+     */
     @Getter
     @Setter
     @XmlAccessorType(XmlAccessType.FIELD)

@@ -42,6 +42,9 @@ public class PaybillPaymentRequest {
     @NotBlank
     private String oafReference;
 
+    /**
+     * Amount class representing the amount and currency information.
+     */
     @Getter
     @Setter
     public static class Amount {

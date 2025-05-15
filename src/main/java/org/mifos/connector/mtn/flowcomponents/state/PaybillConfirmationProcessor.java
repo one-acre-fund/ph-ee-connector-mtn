@@ -82,7 +82,8 @@ public class PaybillConfirmationProcessor implements Processor {
             ProcessInstanceEvent instance = zeebeClient.newCreateInstanceCommand().bpmnProcessId(workflowId)
                     .latestVersion().variables(variables).send().join();
             log.info(
-                    "New workflow instance from process {} started for transaction {}, with correlationId {}, instance key: {}",
+                    "New workflow instance from process {} started for transaction {}, with correlationId {}, "
+                            + "instance key: {}",
                     workflowId, paymentRequest.getOafReference(), workflowTransactionId,
                     instance.getProcessInstanceKey());
             zeebeClient.newPublishMessageCommand().messageName(PENDING_CONFIRMATION_MESSAGE_NAME)
