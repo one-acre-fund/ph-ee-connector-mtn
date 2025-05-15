@@ -3,9 +3,14 @@ package org.mifos.connector.mtn.flowcomponents.state;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.BUY_GOODS_REQUEST_BODY;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.DEPLOYED_PROCESS;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_RESPONSE;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.SERVER_TRANSACTION_STATUS_RETRY_COUNT;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TIMER;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSFER_SETTLEMENT_FAILED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.ZEEBE_ELEMENT_INSTANCE_KEY;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +26,6 @@ import org.mifos.connector.mtn.dto.PaymentRequestDto;
 import org.mifos.connector.mtn.utility.MtnUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,26 +36,28 @@ import org.springframework.stereotype.Component;
 public class TransactionStateWorker {
 
     private final Logger logger;
-    @Autowired
-    private ZeebeClient zeebeClient;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private MtnUtils mtnUtils;
-    @Autowired
-    private CamelContext camelContext;
-    @Autowired
-    private ProducerTemplate producerTemplate;
+
+    private final ZeebeClient zeebeClient;
+
+    private final ObjectMapper objectMapper;
+
+    private final MtnUtils mtnUtils;
+
+    private final CamelContext camelContext;
+
+    private final ProducerTemplate producerTemplate;
+    private final WorkflowInstanceStore workflowInstanceStore;
     @Value("${zeebe.client.evenly-allocated-max-jobs}")
     private int workerMaxJobs;
 
     public TransactionStateWorker(ZeebeClient zeebeClient, ObjectMapper objectMapper, MtnUtils mtnUtils,
-            CamelContext camelContext, ProducerTemplate producerTemplate) {
+            CamelContext camelContext, ProducerTemplate producerTemplate, WorkflowInstanceStore workflowInstanceStore) {
         this.zeebeClient = zeebeClient;
         this.objectMapper = objectMapper;
         this.mtnUtils = mtnUtils;
         this.camelContext = camelContext;
         this.producerTemplate = producerTemplate;
+        this.workflowInstanceStore = workflowInstanceStore;
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -89,5 +95,27 @@ public class TransactionStateWorker {
             client.newCompleteCommand(job.getKey()).send().join();
 
         }).name("get-momo-transaction-status").maxJobsActive(workerMaxJobs).open();
+
+        zeebeClient.newWorker().jobType("mtn-payment-completion").handler((client, job) -> {
+            logger.info("Job '{}' started from process '{}' with key {}", job.getType(), job.getBpmnProcessId(),
+                    job.getKey());
+            Map<String, Object> variables = job.getVariablesAsMap();
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.setProperty(TRANSFER_SETTLEMENT_FAILED, variables.get(TRANSFER_SETTLEMENT_FAILED));
+            exchange.setProperty(TRANSACTION_ID, variables.get(TRANSACTION_ID));
+            exchange.setProperty(EXTERNAL_ID, variables.get(EXTERNAL_ID));
+            producerTemplate.send("direct:mtn-payment-completion", exchange);
+            variables.put(MTN_PAYMENT_COMPLETION_RESPONSE, exchange.getProperty(MTN_PAYMENT_COMPLETION_RESPONSE));
+            variables.put(MTN_PAYMENT_COMPLETED, exchange.getProperty(MTN_PAYMENT_COMPLETED, Boolean.class));
+            client.newCompleteCommand(job.getKey()).variables(variables).send().join();
+        }).name("mtn-payment-completion").maxJobsActive(workerMaxJobs).open();
+
+        zeebeClient.newWorker().jobType("delete-mtn-workflow-instancekey").handler(((client, job) -> {
+            Map<String, Object> variables = job.getVariablesAsMap();
+            String transactionId = (String) variables.get(CLIENT_CORRELATION_ID);
+            logger.info("Removing MTN txn id {} & instance key from store", transactionId);
+            workflowInstanceStore.remove(transactionId);
+            client.newCompleteCommand(job.getKey()).send().join();
+        })).maxJobsActive(workerMaxJobs).open();
     }
 }

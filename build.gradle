@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.apache.camel.springboot:camel-jackson-starter:3.12.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
     implementation "org.apache.camel.springboot:camel-jaxb-starter:${camelCoreVersion}"
+    implementation "org.apache.camel:camel-bean-validator:${camelCoreVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'io.netty:netty-bom:4.1.90.Final'
     compileOnly 'org.projectlombok:lombok:1.18.26'
