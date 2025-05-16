@@ -33,7 +33,7 @@ public class CamelContextConfig {
                 rest.setComponent("undertow");
                 rest.setProducerComponent("undertow");
                 rest.setPort(serverPort);
-                rest.setBindingMode(RestConfiguration.RestBindingMode.json);
+                rest.setBindingMode(RestConfiguration.RestBindingMode.json_xml);
                 rest.setDataFormatProperties(new HashMap<>());
                 rest.getDataFormatProperties().put("prettyPrint", "true");
                 rest.setScheme("http");

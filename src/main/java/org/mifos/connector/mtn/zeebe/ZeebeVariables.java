@@ -18,4 +18,15 @@ public class ZeebeVariables {
 
     public static final String EXTERNAL_ID = "externalId";
     public static final String FINANCIAL_TRANSACTION_ID = "financialTransactionId";
+    public static final String TENANT_ID = "tenantId";
+    public static final String PARTY_LOOKUP_FAILED = "partyLookupFailed";
+    public static final String CONFIRMATION_RECEIVED = "confirmationReceived";
+    public static final String AMS = "ams";
+    public static final String CLIENT_CORRELATION_ID = "clientCorrelationId";
+    public static final String CONFIRMATION_TIMER = "mtnConfirmationTimer";
+    public static final String TRANSFER_CREATE_FAILED = "transferCreateFailed";
+    public static final String PENDING_CONFIRMATION_MESSAGE_NAME = "pendingMtnConfirmation";
+    public static final String TRANSFER_SETTLEMENT_FAILED = "transferSettlementFailed";
+    public static final String MTN_PAYMENT_COMPLETED = "mtnPaymentCompleted";
+    public static final String MTN_PAYMENT_COMPLETION_RESPONSE = "mtnPaymentCompletionResponse";
 }
