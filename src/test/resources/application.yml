@@ -53,6 +53,6 @@ paybill:
   ams-url: http://localhost:8085/ams
   ams-identifier: FINERACTACCOUNTID
   currency: RWF
-  paymentCompletedUrl: "http://localhost:8085/paymentcompleted"
+  payment-completed-url: "http://localhost:8085/paymentcompleted"
   username: "user"
   password: "pass"
