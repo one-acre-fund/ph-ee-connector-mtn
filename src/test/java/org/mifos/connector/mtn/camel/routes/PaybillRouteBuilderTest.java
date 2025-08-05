@@ -77,9 +77,9 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         Exchange exchange = new DefaultExchange(camelContext);
         String requestBody = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/frontend">
-                   <resource>15834384</resource>
-                   <accountholderid>250790690134</accountholderid>
+                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client">
+                   <resource>FRI:15834384@tubura.sp/SP</resource>
+                   <accountholderid>ID:250790690134/MSISDN</accountholderid>
                 </ns0:getfinancialresourceinformationrequest>
                     """;
         exchange.getIn().setBody(requestBody);
@@ -124,7 +124,7 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         Exchange exchange = new DefaultExchange(camelContext);
         String requestBody = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/frontend">
+                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client">
                    <resource>15834384</resource>
                    <accountholderid>250790690134</accountholderid>
                 </ns0:getfinancialresourceinformationrequest>
@@ -154,7 +154,7 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         Exchange exchange = new DefaultExchange(camelContext);
         String requestBody = """
                 <?xml version="1.0" encoding="UTF-8"?>
-                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/frontend">
+                <ns0:getfinancialresourceinformationrequest xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client">
                    <resource>15834384</resource>
                    <accountholderid>250790690134</accountholderid>
                 </ns0:getfinancialresourceinformationrequest>
