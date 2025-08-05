@@ -1,6 +1,8 @@
 package org.mifos.connector.mtn.utility;
 
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CURRENCY;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_ACCOUNT_NUMBER_EXTRACTION_REGEX;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_MSISDN_EXTRACTION_REGEX;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.SECONDARY_IDENTIFIER_NAME;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.AMS;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
@@ -22,6 +24,7 @@ import org.mifos.connector.mtn.dto.ChannelValidationResponse;
 import org.mifos.connector.mtn.dto.Payer;
 import org.mifos.connector.mtn.dto.PaymentRequestDto;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Mtn utilities class.
@@ -143,5 +146,43 @@ public class MtnUtils {
             String accountHoldingInstitutionId) {
         return subtype + "_" + type + "_" + amsName + "-" + accountHoldingInstitutionId;
 
+    }
+
+    /**
+     * Extracts a value from the input string based on the provided regex.
+     *
+     * @param input
+     *            the input string
+     * @param regex
+     *            the regex pattern for the extraction
+     * @return the extracted value or null if the input is blank
+     */
+    private static String extractValue(String input, String regex) {
+        if (!StringUtils.hasText(input)) {
+            return null;
+        }
+        return input.trim().replaceAll(regex, "");
+    }
+
+    /**
+     * Extracts the paybill account number from the input string.
+     *
+     * @param input
+     *            the input string
+     * @return the extracted account number or null if the input is blank
+     */
+    public static String extractPaybillAccountNumber(String input) {
+        return extractValue(input, PAYBILL_ACCOUNT_NUMBER_EXTRACTION_REGEX);
+    }
+
+    /**
+     * Extracts the paybill MSISDN from the input string.
+     *
+     * @param input
+     *            the input string
+     * @return the extracted MSISDN or null if the input is blank
+     */
+    public static String extractPaybillMsisdn(String input) {
+        return extractValue(input, PAYBILL_MSISDN_EXTRACTION_REGEX);
     }
 }

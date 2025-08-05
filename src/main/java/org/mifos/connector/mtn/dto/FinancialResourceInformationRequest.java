@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@XmlRootElement(name = "getfinancialresourceinformationrequest", namespace = "http://www.ericsson.com/em/emm/serviceprovider/v1_0/frontend")
+@XmlRootElement(name = "getfinancialresourceinformationrequest", namespace = "http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinancialResourceInformationRequest {
 

@@ -3,6 +3,8 @@ package org.mifos.connector.mtn.dto;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CURRENCY;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.GET_ACCOUNT_DETAILS_FLAG;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.SECONDARY_IDENTIFIER_NAME;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillMsisdn;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 
 import java.util.List;
@@ -27,8 +29,10 @@ public record ChannelValidationRequest(CustomData primaryIdentifier, CustomData 
      */
     public static ChannelValidationRequest fromPaybillValidation(FinancialResourceInformationRequest request,
             PaybillProps paybillProps, String transactionId) {
-        CustomData primaryIdentifier = new CustomData(paybillProps.getAmsIdentifier(), request.getResource());
-        CustomData secondaryIdentifier = new CustomData(SECONDARY_IDENTIFIER_NAME, request.getAccountHolderId());
+        CustomData primaryIdentifier = new CustomData(paybillProps.getAmsIdentifier(),
+                extractPaybillAccountNumber(request.getResource()));
+        CustomData secondaryIdentifier = new CustomData(SECONDARY_IDENTIFIER_NAME,
+                extractPaybillMsisdn(request.getAccountHolderId()));
         CustomData txnId = new CustomData(TRANSACTION_ID, transactionId);
         CustomData currency = new CustomData(CURRENCY, paybillProps.getCurrency());
         CustomData getAccountDetails = new CustomData(GET_ACCOUNT_DETAILS_FLAG, Boolean.TRUE);

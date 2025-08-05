@@ -12,6 +12,7 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_I
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PRIMARY_IDENTIFIER;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PRIMARY_IDENTIFIER_VALUE;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_RESPONSE;
@@ -128,7 +129,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
             exchange.setProperty(PRIMARY_IDENTIFIER, paybillProps.getAmsIdentifier());
             FinancialResourceInformationRequest request = exchange.getIn()
                     .getBody(FinancialResourceInformationRequest.class);
-            exchange.setProperty(PRIMARY_IDENTIFIER_VALUE, request.getResource());
+            exchange.setProperty(PRIMARY_IDENTIFIER_VALUE, extractPaybillAccountNumber(request.getResource()));
             return ChannelValidationRequest.fromPaybillValidation(request, paybillProps,
                     exchange.getProperty(TRANSACTION_ID, String.class));
         }).marshal().json()
@@ -249,7 +250,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                         + paybillProps.getUsername() + "&authPassword=" + paybillProps.getPassword())
                 .log("Received payment completed response ${header.CamelHttpResponseCode} for transaction"
                         + " ${header.transactionId}: ${body}")
-                .setProperty(MTN_PAYMENT_COMPLETION_RESPONSE, simple("${body}")).process(exchange -> {
+                .setProperty(MTN_PAYMENT_COMPLETION_RESPONSE, simple("${bodyAs(String)}")).process(exchange -> {
                     try {
                         PaymentCompletedResponse response = exchange.getIn().getBody(PaymentCompletedResponse.class);
                         if (response != null && response.getPaymentStatus() != null

@@ -6,6 +6,8 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.CONFIRMATION_
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.MTN_PAYBILL_WORKFLOW_SUBTYPE;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.MTN_PAYBILL_WORKFLOW_TYPE;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillMsisdn;
 import static org.mifos.connector.mtn.utility.MtnUtils.getWorkflowId;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CONFIRMATION_RECEIVED;
@@ -59,12 +61,12 @@ public class PaybillConfirmationProcessor implements Processor {
         Map<String, Object> variables = new HashMap<>();
         variables.put(CONFIRMATION_RECEIVED, true);
         variables.put(CHANNEL_REQUEST, channelConfirmationRequest.toString());
-        variables.put(paybillProps.getAmsIdentifier(), paymentRequest.getReceivingFri());
+        variables.put(paybillProps.getAmsIdentifier(), extractPaybillAccountNumber(paymentRequest.getReceivingFri()));
         variables.put(TRANSACTION_ID, paymentRequest.getOafReference());
         variables.put(CORRELATION_ID, workflowTransactionId);
         variables.put(EXTERNAL_ID, paymentRequest.getTransactionId());
         variables.put(TRANSFER_CREATE_FAILED, false);
-        variables.put("phoneNumber", paymentRequest.getAccountHolderId());
+        variables.put("phoneNumber", extractPaybillMsisdn(paymentRequest.getAccountHolderId()));
         variables.put("amount", paymentRequest.getAmount().getAmount());
         if (workflowTransactionId != null) {
             zeebeClient.newPublishMessageCommand().messageName(PENDING_CONFIRMATION_MESSAGE_NAME)
