@@ -1,6 +1,8 @@
 package org.mifos.connector.mtn.dto;
 
 import static org.mifos.connector.mtn.camel.config.CamelProperties.SECONDARY_IDENTIFIER_NAME;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
+import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillMsisdn;
 
 import org.json.JSONObject;
 
@@ -23,13 +25,13 @@ public record ChannelConfirmationRequest(JSONObject payer, JSONObject payee, JSO
         JSONObject payer = new JSONObject();
         JSONObject partyIdInfoPayer = new JSONObject();
         partyIdInfoPayer.put("partyIdType", SECONDARY_IDENTIFIER_NAME);
-        partyIdInfoPayer.put("partyIdentifier", request.getAccountHolderId());
+        partyIdInfoPayer.put("partyIdentifier", extractPaybillMsisdn(request.getAccountHolderId()));
         payer.put("partyIdInfo", partyIdInfoPayer);
 
         JSONObject payee = new JSONObject();
         JSONObject partyIdInfoPayee = new JSONObject();
         partyIdInfoPayee.put("partyIdType", paybillProps.getAmsIdentifier());
-        partyIdInfoPayee.put("partyIdentifier", request.getReceivingFri());
+        partyIdInfoPayee.put("partyIdentifier", extractPaybillAccountNumber(request.getReceivingFri()));
         payee.put("partyIdInfo", partyIdInfoPayee);
 
         JSONObject amount = new JSONObject();
