@@ -123,7 +123,7 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
     }
 
     @ParameterizedTest
-    @MethodSource("validMsisdnValues")
+    @MethodSource("invalidPaybillValues")
     void extractPaybillMsisdn_whenInputIsInvalid_shouldReturnNull(String input, String expected) {
         Assertions.assertEquals(expected, MtnUtils.extractPaybillMsisdn(input));
     }
