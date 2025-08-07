@@ -39,8 +39,9 @@ public class PaybillPaymentRequest {
     @XmlElement(name = "transmissioncounter")
     private int transmissionCounter;
 
-    @NotBlank
-    private String oafReference;
+    @NotNull
+    @Valid
+    private Extension extension;
 
     /**
      * Amount class representing the amount and currency information.
@@ -55,5 +56,16 @@ public class PaybillPaymentRequest {
 
         @NotBlank
         private String currency;
+    }
+
+    /**
+     * Extension class for additional properties.
+     */
+    @Getter
+    @Setter
+    public static class Extension {
+
+        @NotBlank
+        private String oafReference;
     }
 }

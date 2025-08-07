@@ -188,7 +188,8 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         paymentRequest.setTransactionId("1025552");
         paymentRequest.setAccountHolderId("250790690134");
         paymentRequest.setReceivingFri("15834384");
-        paymentRequest.setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
+        paymentRequest.setExtension(new PaybillPaymentRequest.Extension());
+        paymentRequest.getExtension().setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
         PaybillPaymentRequest.Amount amount = new PaybillPaymentRequest.Amount();
         amount.setAmount(BigDecimal.TEN);
         amount.setCurrency("RWF");
@@ -223,7 +224,8 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         paymentRequest.setTransactionId("1025552");
         paymentRequest.setAccountHolderId("250790690134");
         paymentRequest.setReceivingFri("15834384");
-        paymentRequest.setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
+        paymentRequest.setExtension(new PaybillPaymentRequest.Extension());
+        paymentRequest.getExtension().setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
         PaybillPaymentRequest.Amount amount = new PaybillPaymentRequest.Amount();
         amount.setAmount(BigDecimal.TEN);
         amount.setCurrency("RWF");
@@ -262,7 +264,8 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         paymentRequest.setTransactionId("1025552");
         paymentRequest.setAccountHolderId("250790690134");
         paymentRequest.setReceivingFri("15834384");
-        paymentRequest.setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
+        paymentRequest.setExtension(new PaybillPaymentRequest.Extension());
+        paymentRequest.getExtension().setOafReference("5ef1933d-7daf-4214-857a-ff4ced7e0918");
         PaybillPaymentRequest.Amount amount = new PaybillPaymentRequest.Amount();
         amount.setAmount(BigDecimal.TEN);
         amount.setCurrency("RWF");

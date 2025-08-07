@@ -103,13 +103,14 @@ class PaybillConfirmationProcessorTest {
         processor.process(exchange);
 
         verify(zeebeClient, times(1)).newPublishMessageCommand();
-        verify(workflowInstanceStore).remove(paymentRequest.getOafReference());
+        verify(workflowInstanceStore).remove(paymentRequest.getExtension().getOafReference());
     }
 
     private PaybillPaymentRequest createTestPaybillPaymentRequest() {
         PaybillPaymentRequest paymentRequest = new PaybillPaymentRequest();
         paymentRequest.setTransactionId("12345");
-        paymentRequest.setOafReference("try564rttt");
+        paymentRequest.setExtension(new PaybillPaymentRequest.Extension());
+        paymentRequest.getExtension().setOafReference("try564rttt");
         paymentRequest.setReceivingFri("FRI123");
         PaybillPaymentRequest.Amount amount = new PaybillPaymentRequest.Amount();
         amount.setAmount(BigDecimal.TEN);

@@ -192,7 +192,8 @@ public class PaybillRouteBuilder extends RouteBuilder {
 
         from("direct:paybill-confirmation-base").id("paybill-confirmation-base")
                 .to("bean-validator:confirmation-request-validator")
-                .log("Received mtn confirmation request with transaction id: ${body.oafReference}," + " body: ${body} ")
+                .log("Received mtn confirmation request with transaction id: ${body.extension.oafReference},"
+                        + " body: ${body} ")
                 .setProperty(CONFIRMATION_REQUEST_BODY, simple("${body}"))
                 .to("direct:paybill-transaction-status-check-base").choice().when(exchange -> {
                     TransactionStatusResponseDTO transactionStatusResponse = exchange.getIn()
@@ -205,7 +206,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                             PaybillPaymentRequest.class);
                     PaybillPaymentResponse response = new PaybillPaymentResponse();
                     response.setStatus("PENDING");
-                    response.setProviderTransactionId(paymentRequest.getOafReference());
+                    response.setProviderTransactionId(paymentRequest.getExtension().getOafReference());
                     exchange.getIn().setHeader(HTTP_RESPONSE_CODE, 202);
                     exchange.getIn().setHeader(CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
                     exchange.getIn().setBody(response);
@@ -215,7 +216,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                 .process(exchange -> {
                     PaybillPaymentRequest paymentRequest = exchange.getProperty(CONFIRMATION_REQUEST_BODY,
                             PaybillPaymentRequest.class);
-                    exchange.setProperty(TRANSACTION_ID, paymentRequest.getOafReference());
+                    exchange.setProperty(TRANSACTION_ID, paymentRequest.getExtension().getOafReference());
                     exchange.getIn().removeHeaders("*");
                     exchange.getIn().setBody(null);
                     exchange.getIn().setHeader(PLATFORM_TENANT_ID, paybillProps.getAccountHoldingInstitutionId());
