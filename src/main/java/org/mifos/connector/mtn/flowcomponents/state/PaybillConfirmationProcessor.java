@@ -55,14 +55,14 @@ public class PaybillConfirmationProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         PaybillPaymentRequest paymentRequest = exchange.getProperty(CONFIRMATION_REQUEST_BODY,
                 PaybillPaymentRequest.class);
-        String workflowTransactionId = workflowInstanceStore.get(paymentRequest.getOafReference());
+        String workflowTransactionId = workflowInstanceStore.get(paymentRequest.getExtension().getOafReference());
         ChannelConfirmationRequest channelConfirmationRequest = ChannelConfirmationRequest
                 .fromPaybillConfirmation(paymentRequest, paybillProps);
         Map<String, Object> variables = new HashMap<>();
         variables.put(CONFIRMATION_RECEIVED, true);
         variables.put(CHANNEL_REQUEST, channelConfirmationRequest.toString());
         variables.put(paybillProps.getAmsIdentifier(), extractPaybillAccountNumber(paymentRequest.getReceivingFri()));
-        variables.put(TRANSACTION_ID, paymentRequest.getOafReference());
+        variables.put(TRANSACTION_ID, paymentRequest.getExtension().getOafReference());
         variables.put(CORRELATION_ID, workflowTransactionId);
         variables.put(EXTERNAL_ID, paymentRequest.getTransactionId());
         variables.put(TRANSFER_CREATE_FAILED, false);
@@ -72,14 +72,14 @@ public class PaybillConfirmationProcessor implements Processor {
             zeebeClient.newPublishMessageCommand().messageName(PENDING_CONFIRMATION_MESSAGE_NAME)
                     .correlationKey(workflowTransactionId).timeToLive(Duration.ofMillis(300)).variables(variables)
                     .send();
-            workflowInstanceStore.remove(paymentRequest.getOafReference());
+            workflowInstanceStore.remove(paymentRequest.getExtension().getOafReference());
         } else {
             workflowTransactionId = MtnUtils.generateWorkflowId();
             variables.put(CLIENT_CORRELATION_ID, workflowTransactionId);
             variables.put(CORRELATION_ID, workflowTransactionId);
             variables.put(ORIGIN_DATE, Instant.now().toEpochMilli());
             variables.put(CONFIRMATION_TIMER, paybillProps.getTimer());
-            variables.put(PARTY_LOOKUP_FAILED, paymentRequest.getOafReference() == null);
+            variables.put(PARTY_LOOKUP_FAILED, paymentRequest.getExtension().getOafReference() == null);
             String workflowId = getWorkflowId(MTN_PAYBILL_WORKFLOW_TYPE, MTN_PAYBILL_WORKFLOW_SUBTYPE,
                     paybillProps.getAmsName(), paybillProps.getAccountHoldingInstitutionId());
             ProcessInstanceEvent instance = zeebeClient.newCreateInstanceCommand().bpmnProcessId(workflowId)
@@ -87,7 +87,7 @@ public class PaybillConfirmationProcessor implements Processor {
             log.info(
                     "New workflow instance from process {} started for transaction {}, with correlationId {}, "
                             + "instance key: {}",
-                    workflowId, paymentRequest.getOafReference(), workflowTransactionId,
+                    workflowId, paymentRequest.getExtension().getOafReference(), workflowTransactionId,
                     instance.getProcessInstanceKey());
             zeebeClient.newPublishMessageCommand().messageName(PENDING_CONFIRMATION_MESSAGE_NAME)
                     .correlationKey(workflowTransactionId).timeToLive(Duration.ofMillis(300)).variables(variables)
