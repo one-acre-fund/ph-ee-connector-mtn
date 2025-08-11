@@ -1,6 +1,6 @@
 package org.mifos.connector.mtn.dto;
 
-import static org.mifos.connector.mtn.utility.MtnConstants.PAYBILL_GET_FINANCIAL_RESOURCE_INFORMATION_ENDPOINT_NAMESPACE;
+import static org.mifos.connector.mtn.utility.MtnConstants.PAYBILL_GET_FINANCIAL_RESOURCE_INFO_ENDPOINT_NAMESPACE;
 
 import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@XmlRootElement(name = "getfinancialresourceinformationrequest", namespace = PAYBILL_GET_FINANCIAL_RESOURCE_INFORMATION_ENDPOINT_NAMESPACE)
+@XmlRootElement(name = "getfinancialresourceinformationrequest", namespace = PAYBILL_GET_FINANCIAL_RESOURCE_INFO_ENDPOINT_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinancialResourceInformationRequest {
 

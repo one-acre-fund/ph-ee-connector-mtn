@@ -10,7 +10,7 @@ public final class MtnConstants {
         // Prevent instantiation
     }
 
-    public static final String PAYBILL_GET_FINANCIAL_RESOURCE_INFORMATION_ENDPOINT_NAMESPACE = "http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client";
+    public static final String PAYBILL_GET_FINANCIAL_RESOURCE_INFO_ENDPOINT_NAMESPACE = "http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend/client";
     public static final String PAYBILL_PAYMENT_ENDPOINT_NAMESPACE = "http://www.ericsson.com/em/emm/serviceprovider/v1_1/backend/client";
     public static final String PAYBILL_PAYMENT_COMPLETED_ENDPOINT_NAMESPACE = "http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend";
 }
