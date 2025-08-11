@@ -1,6 +1,6 @@
 package org.mifos.connector.mtn.dto;
 
-import static org.mifos.connector.mtn.utility.MtnConstants.MTN_PAYBILL_PAYMENT_ENDPOINT_NAMESPACE;
+import static org.mifos.connector.mtn.utility.MtnConstants.PAYBILL_PAYMENT_ENDPOINT_NAMESPACE;
 
 import java.math.BigDecimal;
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@XmlRootElement(name = "paymentrequest", namespace = MTN_PAYBILL_PAYMENT_ENDPOINT_NAMESPACE)
+@XmlRootElement(name = "paymentrequest", namespace = PAYBILL_PAYMENT_ENDPOINT_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaybillPaymentRequest {
 

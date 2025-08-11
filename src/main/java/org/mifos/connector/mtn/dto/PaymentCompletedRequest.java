@@ -1,6 +1,6 @@
 package org.mifos.connector.mtn.dto;
 
-import static org.mifos.connector.mtn.utility.MtnConstants.MTN_PAYBILL_PAYMENT_COMPLETED_ENDPOINT_NAMESPACE;
+import static org.mifos.connector.mtn.utility.MtnConstants.PAYBILL_PAYMENT_COMPLETED_ENDPOINT_NAMESPACE;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@XmlRootElement(name = "paymentcompletedrequest", namespace = MTN_PAYBILL_PAYMENT_COMPLETED_ENDPOINT_NAMESPACE)
+@XmlRootElement(name = "paymentcompletedrequest", namespace = PAYBILL_PAYMENT_COMPLETED_ENDPOINT_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentCompletedRequest {
 
