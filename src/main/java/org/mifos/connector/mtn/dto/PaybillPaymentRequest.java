@@ -1,5 +1,7 @@
 package org.mifos.connector.mtn.dto;
 
+import static org.mifos.connector.mtn.utility.MtnConstants.PAYBILL_PAYMENT_ENDPOINT_NAMESPACE;
+
 import java.math.BigDecimal;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@XmlRootElement(name = "paymentrequest", namespace = "http://www.ericsson.com/em/emm/serviceprovider/v1_1/backend/client")
+@XmlRootElement(name = "paymentrequest", namespace = PAYBILL_PAYMENT_ENDPOINT_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaybillPaymentRequest {
 

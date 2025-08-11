@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-08-11
+### Changed
+- [CP-3784](https://oneacrefund.atlassian.net/browse/CP-3784) Modify the namespace for payment endpoint response to match the request namespace.
+
 ## [1.1.2] - 2025-08-07
 ### Changed
 - [CP-3774](https://oneacrefund.atlassian.net/browse/CP-3774) Move oafReference inside extension in MTN payment payload
