@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.4] - 2025-08-11
+## [1.1.5] - 2025-08-14
+### Changed
+- [CP-3784](https://oneacrefund.atlassian.net/browse/CP-3784) MTN Paybill flow - Change the namespace for payment completed from v1_0 to v1_1.
+
+## [1.1.4] - 2025-08-14
 ### Changed
 - [CP-3784](https://oneacrefund.atlassian.net/browse/CP-3784) MTN Paybill flow - Fix basic auth in payment completed request.
 
