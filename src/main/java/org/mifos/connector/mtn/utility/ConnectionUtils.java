@@ -36,7 +36,7 @@ public class ConnectionUtils {
      *            the authentication key (e.g., username or client ID)
      * @param secret
      *            the authentication secret (e.g., password or client secret)
-     * @return a Basic Authentication header value in the format "Basic <Base64-encoded key:secret>"
+     * @return a Basic Authentication header value in the format "Basic Base64-encoded( key:secret )"
      * @throws MissingConfigurationException
      *             if key or secret is null
      */
