@@ -1,8 +1,8 @@
 package org.mifos.connector.mtn.auth;
 
-import java.nio.charset.StandardCharsets;
+import static org.mifos.connector.mtn.utility.ConnectionUtils.createBasicAuthHeaderValue;
+
 import java.time.LocalDateTime;
-import java.util.Base64;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,7 +63,7 @@ public class AuthRoutes extends RouteBuilder {
                 .setHeader("X-Target-Environment", constant(mtnProps.getEnvironment()))
                 .setHeader("Ocp-Apim-Subscription-Key", constant(mtnProps.getSubscriptionKey()))
                 .setHeader("Authorization",
-                        simple("Basic " + createAuthHeader(mtnProps.getClientKey(), mtnProps.getClientSecret())))
+                        simple(createBasicAuthHeaderValue(mtnProps.getClientKey(), mtnProps.getClientSecret())))
                 .toD(mtnProps.getAuthHost() + "/collection/token/" + "?bridgeEndpoint=true" + "&"
                         + "throwExceptionOnFailure=false&" + ConnectionUtils.getConnectionTimeoutDsl(mtnRwTimeout));
 
@@ -78,10 +78,4 @@ public class AuthRoutes extends RouteBuilder {
                 .to("direct:access-token-error");
     }
 
-    private String createAuthHeader(String key, String secret) {
-        key = key.replace("\n", "");
-        secret = secret.replace("\n", "");
-        byte[] credential = (key + ":" + secret).getBytes(StandardCharsets.UTF_8);
-        return Base64.getEncoder().encodeToString(credential);
-    }
 }
