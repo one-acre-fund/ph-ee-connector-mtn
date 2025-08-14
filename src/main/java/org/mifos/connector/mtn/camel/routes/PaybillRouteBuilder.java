@@ -12,7 +12,7 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_I
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PRIMARY_IDENTIFIER;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PRIMARY_IDENTIFIER_VALUE;
-import static org.mifos.connector.mtn.utility.ConnectionUtils.createAuthHeader;
+import static org.mifos.connector.mtn.utility.ConnectionUtils.createBasicAuthHeaderValue;
 import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
@@ -248,7 +248,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                 + "body: ${body} ").setHeader(CONTENT_TYPE, constant(MediaType.APPLICATION_XML_VALUE))
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader("Authorization",
-                        simple("Basic " + createAuthHeader(paybillProps.getUsername(), paybillProps.getPassword())))
+                        constant(createBasicAuthHeaderValue(paybillProps.getUsername(), paybillProps.getPassword())))
                 .toD(paybillProps.getPaymentCompletedUrl() + BRIDGE_ENDPOINT_QUERY_PARAM + "&"
                         + ConnectionUtils.getConnectionTimeoutDsl(mtnTimeout))
                 .log("Received payment completed response ${header.CamelHttpResponseCode} for transaction"

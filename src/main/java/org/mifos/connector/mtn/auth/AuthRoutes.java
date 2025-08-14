@@ -1,6 +1,6 @@
 package org.mifos.connector.mtn.auth;
 
-import static org.mifos.connector.mtn.utility.ConnectionUtils.createAuthHeader;
+import static org.mifos.connector.mtn.utility.ConnectionUtils.createBasicAuthHeaderValue;
 
 import java.time.LocalDateTime;
 import org.apache.camel.Exchange;
@@ -63,7 +63,7 @@ public class AuthRoutes extends RouteBuilder {
                 .setHeader("X-Target-Environment", constant(mtnProps.getEnvironment()))
                 .setHeader("Ocp-Apim-Subscription-Key", constant(mtnProps.getSubscriptionKey()))
                 .setHeader("Authorization",
-                        simple("Basic " + createAuthHeader(mtnProps.getClientKey(), mtnProps.getClientSecret())))
+                        simple(createBasicAuthHeaderValue(mtnProps.getClientKey(), mtnProps.getClientSecret())))
                 .toD(mtnProps.getAuthHost() + "/collection/token/" + "?bridgeEndpoint=true" + "&"
                         + "throwExceptionOnFailure=false&" + ConnectionUtils.getConnectionTimeoutDsl(mtnRwTimeout));
 
