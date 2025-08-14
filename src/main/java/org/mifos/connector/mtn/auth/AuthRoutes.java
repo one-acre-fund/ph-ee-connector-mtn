@@ -1,8 +1,8 @@
 package org.mifos.connector.mtn.auth;
 
-import java.nio.charset.StandardCharsets;
+import static org.mifos.connector.mtn.utility.ConnectionUtils.createAuthHeader;
+
 import java.time.LocalDateTime;
-import java.util.Base64;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import static org.mifos.connector.mtn.utility.ConnectionUtils.createAuthHeader;
 
 /**
  * Class for authentications routes.
@@ -79,6 +77,5 @@ public class AuthRoutes extends RouteBuilder {
                 .to("direct:access-token-save").otherwise().log("Access Token Fetch Unsuccessful")
                 .to("direct:access-token-error");
     }
-
 
 }
