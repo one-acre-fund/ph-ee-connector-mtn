@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static org.mifos.connector.mtn.utility.ConnectionUtils.createAuthHeader;
+
 /**
  * Class for authentications routes.
  */
@@ -78,10 +80,5 @@ public class AuthRoutes extends RouteBuilder {
                 .to("direct:access-token-error");
     }
 
-    private String createAuthHeader(String key, String secret) {
-        key = key.replace("\n", "");
-        secret = secret.replace("\n", "");
-        byte[] credential = (key + ":" + secret).getBytes(StandardCharsets.UTF_8);
-        return Base64.getEncoder().encodeToString(credential);
-    }
+
 }
