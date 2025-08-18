@@ -5,6 +5,13 @@ package org.mifos.connector.mtn.zeebe;
  */
 public class ZeebeVariables {
 
+    /**
+     * Private constructor to prevent instantiation. This class is a utility class and should not be instantiated.
+     */
+    private ZeebeVariables() {
+        // Prevent instantiation
+    }
+
     public static final String TRANSACTION_ID = "transactionId";
     public static final String TRANSACTION_FAILED = "transactionFailed";
     public static final String CALLBACK_RECEIVED = "isCallbackReceived";
@@ -29,4 +36,5 @@ public class ZeebeVariables {
     public static final String TRANSFER_SETTLEMENT_FAILED = "transferSettlementFailed";
     public static final String MTN_PAYMENT_COMPLETED = "mtnPaymentCompleted";
     public static final String MTN_PAYMENT_COMPLETION_RESPONSE = "mtnPaymentCompletionResponse";
+    public static final String MTN_PAYMENT_COMPLETION_HTTP_CODE_RESPONSE = "mtnPaymentCompletionHttpCodeResponse";
 }

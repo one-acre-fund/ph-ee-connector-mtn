@@ -1,11 +1,13 @@
 package org.mifos.connector.mtn.camel.routes;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_HTTP_CODE_RESPONSE;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_RESPONSE;
 
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,7 +35,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Test class for {@link PaybillRouteBuilder}.
  */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
+class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
 
     @Autowired
     private ProducerTemplate template;
@@ -286,10 +289,7 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
     @Test
     void testSuccessfulPaymentCompletion() throws Exception {
         String payload = """
-                <?xml version="1.0" encoding="UTF-8"?>
-                <ns0:paymentcompletedresponse xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend">
-                    <paymentstatus>COMPLETED</paymentstatus>
-                </ns0:paymentcompletedresponse>
+                <?xml version="1.0" encoding="UTF-8"?><ns0:paymentcompletedresponse xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend"/>
                 """;
         AdviceWith.adviceWith(camelContext, "mtn-payment-completion", routeBuilder -> {
             routeBuilder.weaveByToUri("http://*").replace().process(ex -> {
@@ -303,7 +303,8 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         assertNotNull(exchange.getProperty(MTN_PAYMENT_COMPLETION_RESPONSE));
         assertTrue(exchange.getProperty(MTN_PAYMENT_COMPLETED, Boolean.class));
         PaymentCompletedResponse response = exchange.getIn().getBody(PaymentCompletedResponse.class);
-        assertEquals("COMPLETED", response.getPaymentStatus());
+        assertNotNull(response);
+        assertNull(response.getPaymentStatus());
     }
 
     @ParameterizedTest
@@ -318,6 +319,27 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         Exchange exchange = template.send("direct:mtn-payment-completion", new DefaultExchange(camelContext));
 
         assertFalse(exchange.getProperty(MTN_PAYMENT_COMPLETED, Boolean.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFailedPaymentCompletedHttpCodes")
+    @DisplayName("Test failed payment completion with various HTTP codes")
+    void testFailedPaymentCompletion_withHttpCode(Integer httpStatusCode) throws Exception {
+        String payload = """
+                <?xml version="1.0" encoding="UTF-8"?><ns0:paymentcompletedresponse xmlns:ns0="http://www.ericsson.com/em/emm/serviceprovider/v1_0/backend"/>
+                """;
+        AdviceWith.adviceWith(camelContext, "mtn-payment-completion", routeBuilder -> {
+            routeBuilder.weaveByToUri("http://*").replace().process(ex -> {
+                ex.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, httpStatusCode);
+                ex.getIn().setBody(payload);
+            });
+        });
+
+        Exchange exchange = template.send("direct:mtn-payment-completion", new DefaultExchange(camelContext));
+
+        assertThat(exchange.getProperty(MTN_PAYMENT_COMPLETED, Boolean.class)).isFalse();
+        assertThat(exchange.getProperty(MTN_PAYMENT_COMPLETION_RESPONSE)).isEqualTo(payload);
+        assertThat(exchange.getProperty(MTN_PAYMENT_COMPLETION_HTTP_CODE_RESPONSE)).isEqualTo(httpStatusCode);
     }
 
     static Stream<String> provideFailedPaymentCompletedPayloads() {
@@ -340,5 +362,10 @@ public class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
                 </ns0:paymentcompletedresponse>
                 """;
         return Stream.of(failedPayload, pendingPayload, acknowledgedPayload, "", null);
+    }
+
+    static Stream<Integer> provideFailedPaymentCompletedHttpCodes() {
+
+        return Stream.of(401, 500, 502, 504, null);
     }
 }
