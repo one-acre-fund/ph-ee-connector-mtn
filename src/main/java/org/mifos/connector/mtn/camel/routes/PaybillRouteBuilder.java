@@ -168,7 +168,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                             || workflowResponse.transactionId().trim().equalsIgnoreCase("null")) {
                         String transactionId = exchange.getProperty(TRANSACTION_ID, String.class);
                         String errorMessage = "Failed to start paybill workflow for transaction id " + transactionId;
-                        log.error("{}. Response from channel is {}",errorMessage, workflowResponse);
+                        log.error("{}. Response from channel is {}", errorMessage, workflowResponse);
                         throw new RuntimeException(errorMessage);
                     }
                     ChannelValidationResponse validationResponse = exchange.getProperty(CHANNEL_VALIDATION_RESPONSE,

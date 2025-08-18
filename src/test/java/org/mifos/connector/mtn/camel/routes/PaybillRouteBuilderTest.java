@@ -21,6 +21,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
 import org.mifos.connector.mtn.dto.ErrorResponse;
 import org.mifos.connector.mtn.dto.FinancialResourceInformationResponse;
@@ -322,7 +324,8 @@ class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideFailedPaymentCompletedHttpCodes")
+    @NullSource
+    @ValueSource(ints = { 401, 500, 502, 504 })
     @DisplayName("Test failed payment completion with various HTTP codes")
     void testFailedPaymentCompletion_withHttpCode(Integer httpStatusCode) throws Exception {
         String payload = """
@@ -364,8 +367,4 @@ class PaybillRouteBuilderTest extends MtnConnectorApplicationTests {
         return Stream.of(failedPayload, pendingPayload, acknowledgedPayload, "", null);
     }
 
-    static Stream<Integer> provideFailedPaymentCompletedHttpCodes() {
-
-        return Stream.of(401, 500, 502, 504, null);
-    }
 }
