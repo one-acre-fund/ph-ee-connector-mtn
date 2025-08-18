@@ -16,6 +16,7 @@ import static org.mifos.connector.mtn.utility.ConnectionUtils.createBasicAuthHea
 import static org.mifos.connector.mtn.utility.MtnUtils.extractPaybillAccountNumber;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_HTTP_CODE_RESPONSE;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_RESPONSE;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
@@ -167,7 +168,7 @@ public class PaybillRouteBuilder extends RouteBuilder {
                             || workflowResponse.transactionId().trim().equalsIgnoreCase("null")) {
                         String transactionId = exchange.getProperty(TRANSACTION_ID, String.class);
                         String errorMessage = "Failed to start paybill workflow for transaction id " + transactionId;
-                        log.error(errorMessage + ". Response from channel is {}", workflowResponse);
+                        log.error("{}. Response from channel is {}", errorMessage, workflowResponse);
                         throw new RuntimeException(errorMessage);
                     }
                     ChannelValidationResponse validationResponse = exchange.getProperty(CHANNEL_VALIDATION_RESPONSE,
@@ -253,15 +254,15 @@ public class PaybillRouteBuilder extends RouteBuilder {
                         + ConnectionUtils.getConnectionTimeoutDsl(mtnTimeout))
                 .log("Received payment completed response ${header.CamelHttpResponseCode} for transaction"
                         + " ${header.transactionId}: ${body}")
+                .setProperty(MTN_PAYMENT_COMPLETION_HTTP_CODE_RESPONSE, header(HTTP_RESPONSE_CODE))
                 .setProperty(MTN_PAYMENT_COMPLETION_RESPONSE, simple("${bodyAs(String)}")).process(exchange -> {
                     try {
+                        Integer httpResponseCode = exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE,
+                                Integer.class);
                         PaymentCompletedResponse response = exchange.getIn().getBody(PaymentCompletedResponse.class);
-                        if (response != null && response.getPaymentStatus() != null
-                                && "COMPLETED".equalsIgnoreCase(response.getPaymentStatus().trim())) {
-                            exchange.setProperty(MTN_PAYMENT_COMPLETED, true);
-                        } else {
-                            exchange.setProperty(MTN_PAYMENT_COMPLETED, false);
-                        }
+                        exchange.setProperty(MTN_PAYMENT_COMPLETED,
+                                httpResponseCode == 200 && response != null && response.getPaymentStatus() == null);
+
                     } catch (Exception e) {
                         exchange.setProperty(MTN_PAYMENT_COMPLETED, false);
                     }
