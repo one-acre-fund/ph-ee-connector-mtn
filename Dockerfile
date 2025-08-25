@@ -11,6 +11,7 @@ RUN ./gradlew bootJar
 FROM eclipse-temurin:17
 
 EXPOSE 5000
+EXPOSE 8080
 
 RUN mkdir /app
 
