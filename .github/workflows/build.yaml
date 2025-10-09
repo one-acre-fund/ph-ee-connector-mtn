@@ -134,4 +134,4 @@ jobs:
         uses: actions/upload-artifact@v4.6.0
         with:
           name: test-results
-          path: ${{ github.workspace }}/fineract-provider/build/reports/jacoco/test/jacocoTestReport.xml
+          path: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
