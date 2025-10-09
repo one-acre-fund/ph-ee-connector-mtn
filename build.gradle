@@ -136,7 +136,7 @@ bootJar {
 
 sonarqube {
     properties {
-        properfty "sonar.projectKey", "one-acre-fund_ph-ee-connector-mtn"
+        property "sonar.projectKey", "one-acre-fund_ph-ee-connector-mtn"
         property "sonar.organization", "one-acre-fund"
         property "sonar.token", System.getenv("SONAR_TOKEN")
         property "sonar.host.url", "https://sonarcloud.io"
