@@ -147,4 +147,3 @@ sonarqube {
         property "sonar.newCode.referenceBranch", "main"
     }
 }
-
