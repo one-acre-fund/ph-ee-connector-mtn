@@ -4,9 +4,10 @@ plugins {
     id 'java'
     id 'com.diffplug.spotless' version '6.19.0' apply false
     id 'jacoco'
+    id 'org.sonarqube' version '4.4.1.3373'
 }
 group = 'org.mifos.connector'
-version = '1.1.5.1'
+version = '1.1.5.2'
 sourceCompatibility = '17'
 def camelCoreVersion = '3.12.0'
 repositories {
@@ -114,8 +115,8 @@ jacocoTestReport {
     reports {
         xml.required = true // Enable XML report generation
         html.required = true // Enable HTML report generation
-        xml.outputLocation = file("${buildDir}/jacoco/testCoverage.xml") // XML output location
-        html.outputLocation = file("${buildDir}/reports/jacoco/test") // HTML output location
+        xml.destination  file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml") // XML output location
+        html.destination  file("${buildDir}/reports/jacoco/test/html") // HTML output location
     }
 }
 tasks.named('test') {
@@ -131,4 +132,18 @@ tasks.register('printVersion') {
 bootJar {
     // Ensure that the version is excluded from the jar name, so the Dockerfile doesn't break.
     archiveVersion = ''
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "one-acre-fund_ph-ee-connector-mtn"
+        property "sonar.organization", "one-acre-fund"
+        property "sonar.token", System.getenv("SONAR_TOKEN")
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.projectBaseDir", "${project.projectDir}"
+        property "sonar.java.binaries", layout.buildDirectory.dir("classes/java/main").get().asFile.absolutePath
+        property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.absolutePath
+        property "sonar.newCode.period", "previous_version"
+        property "sonar.newCode.referenceBranch", "main"
+    }
 }

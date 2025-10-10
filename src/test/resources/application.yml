@@ -1,5 +1,5 @@
 camel:
-  server-port: 5097
+  server-port: 0 # 0 means we are letting Undertow picking a free port.
   springboot:
     main-run-controller: true
   dataformat:
