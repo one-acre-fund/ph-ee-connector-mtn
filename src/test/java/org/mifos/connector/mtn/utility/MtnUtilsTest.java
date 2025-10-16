@@ -1,5 +1,6 @@
 package org.mifos.connector.mtn.utility;
 
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,9 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mifos.connector.common.channel.dto.TransactionChannelC2BRequestDTO;
+import org.mifos.connector.common.gsma.dto.CustomData;
 import org.mifos.connector.common.gsma.dto.GsmaParty;
 import org.mifos.connector.common.mojaloop.dto.MoneyData;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
+import org.mifos.connector.mtn.dto.ChannelValidationResponse;
 import org.mifos.connector.mtn.dto.PaymentRequestDto;
 
 class MtnUtilsTest extends MtnConnectorApplicationTests {
@@ -142,6 +145,18 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
         return Stream.of(Arguments.of("ID:250790690134/MSISDN", "250790690134"),
                 Arguments.of("ID:12345/MSISDN", "12345"), Arguments.of("   ID:987654321/MSISDN   ", "987654321"),
                 Arguments.of("987654321/MSISDN   ", "987654321"), Arguments.of("987654321", "987654321"));
+    }
+
+    @DisplayName("createCustomData should include paymentScheme variable")
+    @Test
+    void test_createCustomData_includes_paymentScheme() {
+        ChannelValidationResponse response = new ChannelValidationResponse(true, "AMS", "tenant-1", "txn-1", "100",
+                "USD", "12345", "John Doe", List.of(), "Validation successful");
+        String timer = "30s";
+        List<CustomData> customDataList = MtnUtils.createCustomData(response, timer);
+        boolean found = customDataList.stream().anyMatch(
+                cd -> cd.getKey().equals(org.mifos.connector.mtn.camel.config.CamelProperties.PAYMENT_SCHEME));
+        Assertions.assertTrue(found, "CustomData list should include paymentScheme variable");
     }
 
 }

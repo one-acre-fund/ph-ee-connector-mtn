@@ -1,8 +1,10 @@
 package org.mifos.connector.mtn.utility;
 
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CURRENCY;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.MTN_CONSTANT;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_ACCOUNT_NUMBER_EXTRACTION_REGEX;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_MSISDN_EXTRACTION_REGEX;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYMENT_SCHEME;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.SECONDARY_IDENTIFIER_NAME;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.AMS;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
@@ -116,7 +118,7 @@ public class MtnUtils {
      *            the confirmation timer
      * @return a list of {@link CustomData}
      */
-    private static List<CustomData> createCustomData(ChannelValidationResponse validationResponse, String timer) {
+    public static List<CustomData> createCustomData(ChannelValidationResponse validationResponse, String timer) {
         CustomData reconciled = new CustomData(PARTY_LOOKUP_FAILED, !validationResponse.reconciled());
         CustomData confirmationReceived = new CustomData(CONFIRMATION_RECEIVED, false);
         CustomData transactionId = new CustomData(TRANSACTION_ID, validationResponse.transactionId());
@@ -125,8 +127,9 @@ public class MtnUtils {
         CustomData clientCorrelationId = new CustomData(CLIENT_CORRELATION_ID, validationResponse.transactionId());
         CustomData currency = new CustomData(CURRENCY, validationResponse.currency());
         CustomData confirmationTimer = new CustomData(CONFIRMATION_TIMER, timer);
+        CustomData paymentScheme = new CustomData(PAYMENT_SCHEME, MTN_CONSTANT);
         return List.of(reconciled, confirmationReceived, transactionId, ams, tenantId, clientCorrelationId, currency,
-                confirmationTimer);
+                confirmationTimer, paymentScheme);
     }
 
     /**

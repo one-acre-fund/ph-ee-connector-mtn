@@ -36,5 +36,7 @@ public class CamelProperties {
     public static final String MTN_PAYBILL_WORKFLOW_SUBTYPE = "inbound";
     public static final String PAYBILL_ACCOUNT_NUMBER_EXTRACTION_REGEX = "^FRI:|@.*$";
     public static final String PAYBILL_MSISDN_EXTRACTION_REGEX = "^ID:|/MSISDN$";
+    public static final String MTN_CONSTANT = "mtn";
+    public static final String PAYMENT_SCHEME = "paymentScheme";
 
 }
