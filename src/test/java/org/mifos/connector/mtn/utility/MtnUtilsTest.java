@@ -154,9 +154,12 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
                 "USD", "12345", "John Doe", List.of(), "Validation successful");
         String timer = "30s";
         List<CustomData> customDataList = MtnUtils.createCustomData(response, timer);
-        boolean found = customDataList.stream().anyMatch(
-                cd -> cd.getKey().equals(org.mifos.connector.mtn.camel.config.CamelProperties.PAYMENT_SCHEME));
-        Assertions.assertTrue(found, "CustomData list should include paymentScheme variable");
+        CustomData paymentSchemeData = customDataList.stream()
+                .filter(cd -> cd.getKey().equals(org.mifos.connector.mtn.camel.config.CamelProperties.PAYMENT_SCHEME))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(paymentSchemeData, "CustomData list should include paymentScheme variable");
+        Assertions.assertEquals(org.mifos.connector.mtn.camel.config.CamelProperties.MTN_CONSTANT,
+                paymentSchemeData.getValue(), "paymentScheme value should be 'mtn'");
     }
 
 }
