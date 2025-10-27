@@ -1,36 +1,29 @@
 package org.mifos.connector.mtn.auth;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 /**
- * Class that holds the access token.
+ * Class that holds the access tokens by country.
  */
 @Component
 public class AccessTokenStore {
 
-    public String accessToken;
-    public LocalDateTime expiresOn;
+    private final ConcurrentHashMap<String, String> accessTokens = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, LocalDateTime> expiresOn = new ConcurrentHashMap<>();
 
-    public AccessTokenStore() {
-        this.expiresOn = LocalDateTime.now();
-        System.out.println("ACCESS TOKEN STORE CREATED!");
+    public void setAccessToken(String country, String accessToken, int expiresIn) {
+        accessTokens.put(country, accessToken);
+        expiresOn.put(country, LocalDateTime.now().plusSeconds(expiresIn));
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getAccessToken(String country) {
+        return accessTokens.get(country);
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public LocalDateTime getExpiresOn() {
-        return expiresOn;
-    }
-
-    public void setExpiresOn(int expiresIn) {
-        this.expiresOn = LocalDateTime.now().plusSeconds(expiresIn);
+    public LocalDateTime getExpiresOn(String country) {
+        return expiresOn.get(country);
     }
 
     /**
@@ -40,11 +33,8 @@ public class AccessTokenStore {
      *            the date to check time against
      * @return boolean
      */
-    public boolean isValid(LocalDateTime dateTime) {
-        if (dateTime.isBefore(expiresOn)) {
-            return true;
-        } else {
-            return false;
-        }
+    public boolean isValid(String country, LocalDateTime dateTime) {
+        LocalDateTime expiry = expiresOn.get(country);
+        return expiry != null && dateTime.isBefore(expiry);
     }
 }

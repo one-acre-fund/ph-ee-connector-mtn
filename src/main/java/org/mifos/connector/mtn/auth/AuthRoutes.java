@@ -1,6 +1,7 @@
 package org.mifos.connector.mtn.auth;
 
 import static org.mifos.connector.mtn.utility.ConnectionUtils.createBasicAuthHeaderValue;
+import static org.mifos.connector.mtn.utility.MtnUtils.getCountryFromExchange;
 
 import java.time.LocalDateTime;
 import org.apache.camel.Exchange;
@@ -27,7 +28,7 @@ public class AuthRoutes extends RouteBuilder {
     @Autowired
     private MtnProps mtnProps;
     @Value("${mtn.api.timeout}")
-    private Integer mtnRwTimeout;
+    private Integer mtnTimeout;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -48,9 +49,10 @@ public class AuthRoutes extends RouteBuilder {
          */
         from("direct:access-token-save").id("access-token-save").unmarshal()
                 .json(JsonLibrary.Jackson, AccessTokenDTO.class).process(exchange -> {
-                    accessTokenStore.setAccessToken(exchange.getIn().getBody(AccessTokenDTO.class).getAccess_token());
-                    accessTokenStore.setExpiresOn(exchange.getIn().getBody(AccessTokenDTO.class).getExpires_in());
-                    logger.info("Saved Access Token: " + accessTokenStore.getAccessToken());
+                    accessTokenStore.setAccessToken(getCountryFromExchange(exchange),
+                            exchange.getIn().getBody(AccessTokenDTO.class).getAccess_token(),
+                            exchange.getIn().getBody(AccessTokenDTO.class).getExpires_in());
+                    logger.info("Saved Access Token");
                 });
 
         /*
@@ -59,23 +61,27 @@ public class AuthRoutes extends RouteBuilder {
         from("direct:access-token-fetch").id("access-token-fetch").log(LoggingLevel.INFO, "Fetching access token")
                 .removeHeader(Exchange.HTTP_PATH).process(exchange -> {
                     logger.info("AMS Name in Route " + mtnProps.getAuthHost());
+                    String country = getCountryFromExchange(exchange);
+                    logger.info("Tenant in Route " + country);
+                    String clientKey = mtnProps.getCountryConfig().get(country).getClientKey();
+                    String clientSecret = mtnProps.getCountryConfig().get(country).getClientSecret();
+                    String authHeader = createBasicAuthHeaderValue(clientKey, clientSecret);
+                    exchange.getIn().setHeader("Authorization", authHeader);
                 }).setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader("X-Target-Environment", constant(mtnProps.getEnvironment()))
                 .setHeader("Ocp-Apim-Subscription-Key", constant(mtnProps.getSubscriptionKey()))
-                .setHeader("Authorization",
-                        simple(createBasicAuthHeaderValue(mtnProps.getClientKey(), mtnProps.getClientSecret())))
                 .toD(mtnProps.getAuthHost() + "/collection/token/" + "?bridgeEndpoint=true" + "&"
-                        + "throwExceptionOnFailure=false&" + ConnectionUtils.getConnectionTimeoutDsl(mtnRwTimeout));
+                        + "throwExceptionOnFailure=false&" + ConnectionUtils.getConnectionTimeoutDsl(mtnTimeout));
 
         /*
          * Access Token check validity and return value
          */
         from("direct:get-access-token").id("get-access-token").choice()
-                .when(exchange -> accessTokenStore.isValid(LocalDateTime.now())).log("Access token valid. Continuing.")
-                .otherwise().log("Access token expired or not present").to("direct:access-token-fetch").choice()
-                .when(header("CamelHttpResponseCode").isEqualTo("200")).log("Access Token Fetch Successful")
-                .to("direct:access-token-save").otherwise().log("Access Token Fetch Unsuccessful")
-                .to("direct:access-token-error");
+                .when(exchange -> accessTokenStore.isValid(getCountryFromExchange(exchange), LocalDateTime.now()))
+                .log("Access token valid. Continuing.").otherwise().log("Access token expired or not present")
+                .to("direct:access-token-fetch").choice().when(header("CamelHttpResponseCode").isEqualTo("200"))
+                .log("Access Token Fetch Successful").to("direct:access-token-save").otherwise()
+                .log("Access Token Fetch Unsuccessful").to("direct:access-token-error");
     }
 
 }

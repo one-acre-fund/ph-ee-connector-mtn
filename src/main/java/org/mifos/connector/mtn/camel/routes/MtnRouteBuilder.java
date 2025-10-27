@@ -8,6 +8,7 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.ERROR_INFORMA
 import static org.mifos.connector.mtn.camel.config.CamelProperties.IS_RETRY_EXCEEDED;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.IS_TRANSACTION_PENDING;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.LAST_RESPONSE_BODY;
+import static org.mifos.connector.mtn.utility.MtnUtils.getCountryFromExchange;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CALLBACK;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CALLBACK_RECEIVED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.FINANCIAL_TRANSACTION_ID;
@@ -72,7 +73,8 @@ public class MtnRouteBuilder extends RouteBuilder {
          */
         from("direct:request-to-pay-base").id("request-to-pay-base").log(LoggingLevel.INFO, "Starting buy goods flow")
                 .log(LoggingLevel.INFO, "Starting buy goods flow with retry count: " + 3).to("direct:get-access-token")
-                .process(exchange -> exchange.setProperty(ACCESS_TOKEN, accessTokenStore.getAccessToken()))
+                .process(exchange -> exchange.setProperty(ACCESS_TOKEN,
+                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange))))
                 .log(LoggingLevel.INFO, "Got access token, moving on to API call.").to("direct:request-to-pay")
                 .log(LoggingLevel.INFO, "Status: ${header.CamelHttpResponseCode}")
                 .to("direct:mtn-transaction-response-handler");
@@ -147,7 +149,8 @@ public class MtnRouteBuilder extends RouteBuilder {
                 .log(LoggingLevel.INFO, "Starting buy goods transaction status flow").choice()
                 .when(exchangeProperty(SERVER_TRANSACTION_STATUS_RETRY_COUNT).isLessThanOrEqualTo(maxRetryCount))
                 .to("direct:get-access-token")
-                .process(exchange -> exchange.setProperty(ACCESS_TOKEN, accessTokenStore.getAccessToken()))
+                .process(exchange -> exchange.setProperty(ACCESS_TOKEN,
+                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange))))
                 .log(LoggingLevel.INFO, "Got access token, moving on to API call.").to("direct:mtn-transaction-status")
                 .log(LoggingLevel.INFO, "Status: ${header.CamelHttpResponseCode}")
                 .log(LoggingLevel.INFO, "Transaction API response: ${body}")
