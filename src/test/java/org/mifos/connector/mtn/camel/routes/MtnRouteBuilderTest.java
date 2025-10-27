@@ -16,6 +16,7 @@ import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_FAILED;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
 import org.mifos.connector.mtn.auth.AccessTokenStore;
+import org.mifos.connector.mtn.auth.TokenEntry;
 import org.mifos.connector.mtn.dto.MtnCallback;
 import org.mifos.connector.mtn.dto.Payer;
 import org.mifos.connector.mtn.dto.PaymentRequestDto;
@@ -94,7 +96,7 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
             routeBuilder.weaveByToUri("direct:mtn-transaction-response-handler").replace()
                     .to(mockMtnTransactionResponseHandler);
         });
-        when(accessTokenStore.getAccessToken("rwanda")).thenReturn("valid-token");
+        when(accessTokenStore.getAccessToken("rwanda")).thenReturn(new TokenEntry("valid-token", LocalDateTime.MAX));
 
         mockMtnTransactionResponseHandler.expectedMessageCount(1);
         mockMtnTransactionResponseHandler.expectedMessagesMatches(exchange -> {

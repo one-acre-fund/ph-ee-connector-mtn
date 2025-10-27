@@ -37,7 +37,7 @@ class AuthRoutesTest extends MtnConnectorApplicationTests {
         LocalDateTime expectedExpirationTime = LocalDateTime.now().plusSeconds(3600);
 
         // Assertions
-        Assertions.assertEquals("test-access-token", accessTokenStore.getAccessToken("rwanda"));
+        Assertions.assertEquals("test-access-token", accessTokenStore.getAccessToken("rwanda").getToken());
         assertTrue(
                 !actualExpirationTime.isBefore(expectedExpirationTime.minusSeconds(5))
                         && !actualExpirationTime.isAfter(expectedExpirationTime.plusSeconds(5)),

@@ -18,7 +18,7 @@ class AccessTokenStoreTest extends MtnConnectorApplicationTests {
         String testToken = "test-access-token-123";
         tokenStore.setAccessToken(COUNTRY, testToken, 3600);
 
-        String retrievedToken = tokenStore.getAccessToken(COUNTRY);
+        String retrievedToken = tokenStore.getAccessToken(COUNTRY).getToken();
 
         Assertions.assertEquals(testToken, retrievedToken);
     }

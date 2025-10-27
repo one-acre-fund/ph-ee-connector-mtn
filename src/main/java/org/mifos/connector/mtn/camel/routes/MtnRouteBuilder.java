@@ -74,7 +74,7 @@ public class MtnRouteBuilder extends RouteBuilder {
         from("direct:request-to-pay-base").id("request-to-pay-base").log(LoggingLevel.INFO, "Starting buy goods flow")
                 .log(LoggingLevel.INFO, "Starting buy goods flow with retry count: " + 3).to("direct:get-access-token")
                 .process(exchange -> exchange.setProperty(ACCESS_TOKEN,
-                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange))))
+                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange)).getToken()))
                 .log(LoggingLevel.INFO, "Got access token, moving on to API call.").to("direct:request-to-pay")
                 .log(LoggingLevel.INFO, "Status: ${header.CamelHttpResponseCode}")
                 .to("direct:mtn-transaction-response-handler");

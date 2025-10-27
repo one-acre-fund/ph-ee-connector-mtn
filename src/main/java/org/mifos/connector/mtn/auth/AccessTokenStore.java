@@ -10,20 +10,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccessTokenStore {
 
-    private final ConcurrentHashMap<String, String> accessTokens = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, LocalDateTime> expiresOn = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, TokenEntry> tokens = new ConcurrentHashMap<>();
 
     public void setAccessToken(String country, String accessToken, int expiresIn) {
-        accessTokens.put(country, accessToken);
-        expiresOn.put(country, LocalDateTime.now().plusSeconds(expiresIn));
+        tokens.put(country, new TokenEntry(accessToken, LocalDateTime.now().plusSeconds(expiresIn)));
     }
 
-    public String getAccessToken(String country) {
-        return accessTokens.get(country);
+    public TokenEntry getAccessToken(String country) {
+        return tokens.get(country);
     }
 
     public LocalDateTime getExpiresOn(String country) {
-        return expiresOn.get(country);
+        return getAccessToken(country).getExpiresOn();
     }
 
     /**
@@ -34,7 +32,7 @@ public class AccessTokenStore {
      * @return boolean
      */
     public boolean isValid(String country, LocalDateTime dateTime) {
-        LocalDateTime expiry = expiresOn.get(country);
-        return expiry != null && dateTime.isBefore(expiry);
+        TokenEntry expiry = getAccessToken(country);
+        return expiry != null && dateTime.isBefore(expiry.getExpiresOn());
     }
 }
