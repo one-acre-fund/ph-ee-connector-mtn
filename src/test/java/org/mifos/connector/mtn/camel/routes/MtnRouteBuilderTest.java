@@ -94,7 +94,7 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
             routeBuilder.weaveByToUri("direct:mtn-transaction-response-handler").replace()
                     .to(mockMtnTransactionResponseHandler);
         });
-        when(accessTokenStore.getAccessToken()).thenReturn("valid-token");
+        when(accessTokenStore.getAccessToken("rwanda")).thenReturn("valid-token");
 
         mockMtnTransactionResponseHandler.expectedMessageCount(1);
         mockMtnTransactionResponseHandler.expectedMessagesMatches(exchange -> {

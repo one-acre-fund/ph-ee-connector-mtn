@@ -4,11 +4,13 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.BUY_GOODS_REQ
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.DEPLOYED_PROCESS;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.MTN_API_RESPONSE;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_FAILED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.zeebe.client.ZeebeClient;
+import java.util.Currency;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
@@ -64,6 +66,7 @@ public class MtnWorker {
             exchange.setProperty(BUY_GOODS_REQUEST_BODY, paymentRequestDto);
             exchange.setProperty(CORRELATION_ID, UUID.randomUUID());
             exchange.setProperty(DEPLOYED_PROCESS, job.getBpmnProcessId());
+            exchange.setProperty(PLATFORM_TENANT_ID, getCountryFromCurrency(channelRequest.getAmount().getCurrency()));
             variables.put(CORRELATION_ID, exchange.getProperty(CORRELATION_ID));
             logger.info("CorrelationID: '{}'!", exchange.getProperty(CORRELATION_ID));
             producerTemplate.send("direct:request-to-pay-base", exchange);
@@ -76,5 +79,12 @@ public class MtnWorker {
             }
             client.newCompleteCommand(job.getKey()).variables(variables).send().join();
         }).name("init-momo-transfer").maxJobsActive(100).open();
+    }
+
+    private String getCountryFromCurrency(String currency) {
+        if (Currency.getInstance(currency).equals(Currency.getInstance("ZMK"))) {
+            return "zambia";
+        }
+        return "rwanda";
     }
 }
