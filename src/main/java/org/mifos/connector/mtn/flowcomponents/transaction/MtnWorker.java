@@ -5,12 +5,12 @@ import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_I
 import static org.mifos.connector.mtn.camel.config.CamelProperties.DEPLOYED_PROCESS;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.MTN_API_RESPONSE;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
+import static org.mifos.connector.mtn.utility.MtnUtils.getCountryFromCurrency;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_FAILED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.zeebe.client.ZeebeClient;
-import java.util.Currency;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
@@ -81,10 +81,4 @@ public class MtnWorker {
         }).name("init-momo-transfer").maxJobsActive(100).open();
     }
 
-    private String getCountryFromCurrency(String currency) {
-        if (Currency.getInstance(currency).equals(Currency.getInstance("ZMK"))) {
-            return "zambia";
-        }
-        return "rwanda";
-    }
 }
