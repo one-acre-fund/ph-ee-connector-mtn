@@ -15,16 +15,16 @@ zeebe:
   broker:
     contactpoint: "localhost:26500"
 
-mtnrw:
+mtn:
   auth-host: "https://sandbox.momodeveloper.mtn.com"
-  client-key: "xxxxxxxxxxxxxxxxxx"
-  client-secret: "xxxxxxxxxxxxx"
   api-host: "https://sandbox.momodeveloper.mtn.com"
   environment: "sandbox"
   subscriptionKey: "xxxxxxxxxxxxxxxxx"
   callBack: "http://helloyou.requestcatcher.com"
-
-mtn:
+  country-config:
+    rwanda:
+      client-key: "xxxxxxxxxxxxxxxxxx"
+      client-secret: "xxxxxxxxxxxxx"
   api:
     timeout: 60000
   max-retry-count: 2
