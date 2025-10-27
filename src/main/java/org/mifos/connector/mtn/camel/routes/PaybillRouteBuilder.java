@@ -150,7 +150,6 @@ public class PaybillRouteBuilder extends RouteBuilder {
                     exchange.getIn().setHeader(TENANT_ID, validationResponse.accountHoldingInstitutionId());
                     exchange.getIn().setHeader(CORRELATION_ID_HEADER, validationResponse.transactionId());
                     exchange.getIn().setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                    exchange.getIn().setHeader("Platform-TenantId", constant());
                     exchange.setProperty(CHANNEL_VALIDATION_RESPONSE, validationResponse);
                     String primaryIdentifier = exchange.getProperty(PRIMARY_IDENTIFIER, String.class);
                     String primaryIdentifierValue = exchange.getProperty(PRIMARY_IDENTIFIER_VALUE, String.class);

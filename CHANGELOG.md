@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.6] - 2025-10-27
 ### Changed
-- [CP-3892](https://oneacrefund.atlassian.net/browse/CP-3892) MTN  (Zambia) Payments Integration with PH
+- [CP-3892](https://oneacrefund.atlassian.net/browse/CP-3892) MTN (Zambia) Payments Integration with PH
 
 ## [1.1.5.2] - 2025-10-05
 ### Changed

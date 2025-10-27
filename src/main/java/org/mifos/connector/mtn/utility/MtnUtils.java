@@ -194,6 +194,8 @@ public class MtnUtils {
         return Optional.ofNullable(exchange.getProperty(PLATFORM_TENANT_ID, String.class)).orElse(DEFAULT_TENANT);
     }
 
+    private static final Map<String, String> currencyToCountryMap = Map.of("ZMW", "zambia", "RWF", "rwanda");
+
     /**
      * Gets the country based on the currency.
      *
@@ -202,9 +204,6 @@ public class MtnUtils {
      * @return the country
      */
     public static String getCountryFromCurrency(String currency) {
-        if (Currency.getInstance(currency).equals(Currency.getInstance("ZMK"))) {
-            return "zambia";
-        }
-        return "rwanda";
+        return currencyToCountryMap.getOrDefault(currency, "rwanda");
     }
 }

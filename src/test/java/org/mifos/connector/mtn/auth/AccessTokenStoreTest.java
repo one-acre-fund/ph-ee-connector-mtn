@@ -41,7 +41,9 @@ class AccessTokenStoreTest extends MtnConnectorApplicationTests {
         boolean isValid = tokenStore.isValid(COUNTRY, testTime);
 
         Assertions.assertTrue(isValid);
-        Assertions.assertEquals(tokenStore.getExpiresOn(COUNTRY), tokenStore.getExpiresOn(COUNTRY));
+        Assertions.assertNotNull(tokenStore.getExpiresOn(COUNTRY), "Expiration time should be set");
+        Assertions.assertTrue(tokenStore.getExpiresOn(COUNTRY).isAfter(LocalDateTime.now()),
+                "Expiration time should be in the future");
     }
 
     @DisplayName("Return false when input datetime is after expiration time")
