@@ -11,10 +11,7 @@ import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import org.apache.camel.Exchange;
 import org.mifos.connector.common.channel.dto.TransactionChannelC2BRequestDTO;
 import org.mifos.connector.common.gsma.dto.CustomData;
@@ -195,5 +192,19 @@ public class MtnUtils {
      */
     public static String getCountryFromExchange(Exchange exchange) {
         return Optional.ofNullable(exchange.getProperty(PLATFORM_TENANT_ID, String.class)).orElse(DEFAULT_TENANT);
+    }
+
+    /**
+     * Gets the country based on the currency.
+     *
+     * @param currency
+     *            the currency code
+     * @return the country
+     */
+    public static String getCountryFromCurrency(String currency) {
+        if (Currency.getInstance(currency).equals(Currency.getInstance("ZMK"))) {
+            return "zambia";
+        }
+        return "rwanda";
     }
 }
