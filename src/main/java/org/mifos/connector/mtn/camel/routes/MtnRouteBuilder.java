@@ -100,7 +100,7 @@ public class MtnRouteBuilder extends RouteBuilder {
                 .toD(mtnProps.getApiHost() + "/collection/v1_0/requesttopay"
                         + "?bridgeEndpoint=true&throwExceptionOnFailure=false&"
                         + ConnectionUtils.getConnectionTimeoutDsl(mtnTimeout))
-                .log(LoggingLevel.INFO, "MTN-RW Request to pay called, response: \n\n ${body}")
+                .log(LoggingLevel.INFO, "MTN Request to pay called, response: \n${body}\n")
                 .process(mtnGenericProcessor);
         from("direct:mtn-transaction-response-handler").id("mtn-transaction-response-handler").choice()
                 .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("202"))
@@ -150,7 +150,7 @@ public class MtnRouteBuilder extends RouteBuilder {
                 .when(exchangeProperty(SERVER_TRANSACTION_STATUS_RETRY_COUNT).isLessThanOrEqualTo(maxRetryCount))
                 .to("direct:get-access-token")
                 .process(exchange -> exchange.setProperty(ACCESS_TOKEN,
-                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange))))
+                        accessTokenStore.getAccessToken(getCountryFromExchange(exchange)).getToken()))
                 .log(LoggingLevel.INFO, "Got access token, moving on to API call.").to("direct:mtn-transaction-status")
                 .log(LoggingLevel.INFO, "Status: ${header.CamelHttpResponseCode}")
                 .log(LoggingLevel.INFO, "Transaction API response: ${body}")

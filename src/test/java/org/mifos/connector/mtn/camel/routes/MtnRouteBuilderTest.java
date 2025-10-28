@@ -276,6 +276,8 @@ class MtnRouteBuilderTest extends MtnConnectorApplicationTests {
         mockTransactionStatus.expectedMessageCount(1);
         mockTransactionStatusResponseHandler.expectedMessageCount(1);
 
+        when(accessTokenStore.getAccessToken("rwanda")).thenReturn(new TokenEntry("valid-token", LocalDateTime.MAX));
+
         // Set properties
         Exchange exchange = camelContext.getEndpoint("direct:mtn-get-transaction-status-base").createExchange();
         exchange.setProperty(SERVER_TRANSACTION_STATUS_RETRY_COUNT, 2);

@@ -33,6 +33,6 @@ public class AccessTokenStore {
      */
     public boolean isValid(String country, LocalDateTime dateTime) {
         TokenEntry expiry = getAccessToken(country);
-        return expiry != null && dateTime.isBefore(expiry.getExpiresOn());
+        return expiry != null && dateTime != null && dateTime.isBefore(expiry.getExpiresOn());
     }
 }

@@ -3,6 +3,7 @@ package org.mifos.connector.mtn.flowcomponents.state;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.BUY_GOODS_REQUEST_BODY;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.DEPLOYED_PROCESS;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
@@ -78,6 +79,8 @@ public class TransactionStateWorker {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.setProperty(CORRELATION_ID, variables.get("correlationId"));
             exchange.setProperty(TRANSACTION_ID, variables.get("transactionId"));
+            exchange.setProperty(PLATFORM_TENANT_ID,
+                    job.getBpmnProcessId().substring(job.getBpmnProcessId().lastIndexOf('-') + 1));
             logger.info("correlation Id: " + variables.get("correlationId"));
             logger.info("transactionId : " + variables.get("transactionId"));
             TransactionChannelC2BRequestDTO channelRequest = objectMapper
