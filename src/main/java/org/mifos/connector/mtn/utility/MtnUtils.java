@@ -1,6 +1,10 @@
 package org.mifos.connector.mtn.utility;
 
-import static org.mifos.connector.mtn.camel.config.CamelProperties.*;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.CURRENCY;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_ACCOUNT_NUMBER_EXTRACTION_REGEX;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PAYBILL_MSISDN_EXTRACTION_REGEX;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.SECONDARY_IDENTIFIER_NAME;
 import static org.mifos.connector.mtn.utility.MtnConstants.DEFAULT_TENANT;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.AMS;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
@@ -11,7 +15,11 @@ import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import org.apache.camel.Exchange;
 import org.mifos.connector.common.channel.dto.TransactionChannelC2BRequestDTO;
 import org.mifos.connector.common.gsma.dto.CustomData;
