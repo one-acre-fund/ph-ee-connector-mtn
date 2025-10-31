@@ -64,7 +64,8 @@ public class AuthRoutes extends RouteBuilder {
                     String country = getCountryFromExchange(exchange);
                     logger.info("Tenant in Route " + country);
                     MtnProps.MtnCountryCreds countryCredentials = mtnProps.getCountryConfig().get(country);
-                    String authHeader = createBasicAuthHeaderValue(countryCredentials.getClientKey(), countryCredentials.getClientSecret());
+                    String authHeader = createBasicAuthHeaderValue(countryCredentials.getClientKey(),
+                            countryCredentials.getClientSecret());
                     exchange.getIn().setHeader("Authorization", authHeader);
                 }).setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader("X-Target-Environment", constant(mtnProps.getEnvironment()))
