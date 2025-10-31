@@ -33,15 +33,44 @@ class AuthRoutesTest extends MtnConnectorApplicationTests {
         // Send input to the route
         fluentProducerTemplate.to("direct:access-token-save").withBody(inputJson).send();
 
-        LocalDateTime actualExpirationTime = accessTokenStore.getExpiresOn();
+        LocalDateTime actualExpirationTime = accessTokenStore.getExpiresOn("rwanda");
         LocalDateTime expectedExpirationTime = LocalDateTime.now().plusSeconds(3600);
 
         // Assertions
-        Assertions.assertEquals("test-access-token", accessTokenStore.getAccessToken());
+        Assertions.assertEquals("test-access-token", accessTokenStore.getAccessToken("rwanda").getToken());
         assertTrue(
                 !actualExpirationTime.isBefore(expectedExpirationTime.minusSeconds(5))
                         && !actualExpirationTime.isAfter(expectedExpirationTime.plusSeconds(5)),
                 "Expiration time is within tolerance range");
+    }
+
+    @DisplayName("Test Access Token Error Route")
+    @Test
+    void testAccessTokenErrorRoute() {
+        String errorBody = "Test error";
+        Assertions.assertDoesNotThrow(() -> fluentProducerTemplate.to("direct:access-token-error").withBody(errorBody)
+                .withHeader("Test-Header", "HeaderValue").send());
+    }
+
+    @DisplayName("Test Access Token Fetch Route")
+    @Test
+    void testAccessTokenFetchRoute() {
+        Assertions
+                .assertDoesNotThrow(() -> fluentProducerTemplate.to("direct:access-token-fetch").withBody(null).send());
+    }
+
+    @DisplayName("Test Get Access Token Route - Valid Token")
+    @Test
+    void testGetAccessTokenRouteValidToken() {
+        accessTokenStore.setAccessToken("rwanda", "valid-token", 3600);
+        Assertions.assertDoesNotThrow(() -> fluentProducerTemplate.to("direct:get-access-token").withBody(null).send());
+    }
+
+    @DisplayName("Test Get Access Token Route - Expired Token")
+    @Test
+    void testGetAccessTokenRouteExpiredToken() {
+        accessTokenStore.setAccessToken("rwanda", "expired-token", -3600);
+        Assertions.assertDoesNotThrow(() -> fluentProducerTemplate.to("direct:get-access-token").withBody(null).send());
     }
 
 }

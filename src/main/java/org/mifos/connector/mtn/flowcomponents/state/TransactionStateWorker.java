@@ -3,11 +3,13 @@ package org.mifos.connector.mtn.flowcomponents.state;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.BUY_GOODS_REQUEST_BODY;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.CORRELATION_ID;
 import static org.mifos.connector.mtn.camel.config.CamelProperties.DEPLOYED_PROCESS;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.CLIENT_CORRELATION_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.EXTERNAL_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETED;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.MTN_PAYMENT_COMPLETION_RESPONSE;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.SERVER_TRANSACTION_STATUS_RETRY_COUNT;
+import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TENANT_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TIMER;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSACTION_ID;
 import static org.mifos.connector.mtn.zeebe.ZeebeVariables.TRANSFER_SETTLEMENT_FAILED;
@@ -78,6 +80,7 @@ public class TransactionStateWorker {
             Exchange exchange = new DefaultExchange(camelContext);
             exchange.setProperty(CORRELATION_ID, variables.get("correlationId"));
             exchange.setProperty(TRANSACTION_ID, variables.get("transactionId"));
+            exchange.setProperty(PLATFORM_TENANT_ID, variables.get(TENANT_ID));
             logger.info("correlation Id: " + variables.get("correlationId"));
             logger.info("transactionId : " + variables.get("transactionId"));
             TransactionChannelC2BRequestDTO channelRequest = objectMapper

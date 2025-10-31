@@ -1,6 +1,12 @@
 package org.mifos.connector.mtn.utility;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mifos.connector.mtn.camel.config.CamelProperties.PLATFORM_TENANT_ID;
+
 import java.util.stream.Stream;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -142,6 +148,37 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
         return Stream.of(Arguments.of("ID:250790690134/MSISDN", "250790690134"),
                 Arguments.of("ID:12345/MSISDN", "12345"), Arguments.of("   ID:987654321/MSISDN   ", "987654321"),
                 Arguments.of("987654321/MSISDN   ", "987654321"), Arguments.of("987654321", "987654321"));
+    }
+
+    @DisplayName("getCountryFromExchange returns country when property is set")
+    @Test
+    void test_getCountryFromExchange_with_property_set() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.setProperty(PLATFORM_TENANT_ID, "rwanda");
+        String result = MtnUtils.getCountryFromExchange(exchange);
+        assertEquals("rwanda", result);
+    }
+
+    @DisplayName("getCountryFromExchange returns default tenant when property is missing")
+    @Test
+    void test_getCountryFromExchange_with_property_missing() {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        String result = MtnUtils.getCountryFromExchange(exchange);
+        assertEquals("rwanda", result);
+    }
+
+    @DisplayName("getCountryFromCurrency returns 'zambia' for ZMW")
+    @Test
+    void test_getCountryFromCurrency_with_ZMW() {
+        assertEquals("zambia", MtnUtils.getCountryFromCurrency("ZMW"));
+    }
+
+    @DisplayName("getCountryFromCurrency returns 'rwanda' for non-ZMW currency")
+    @Test
+    void test_getCountryFromCurrency_with_non_ZMW() {
+        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("EUR"));
+        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("USD"));
+        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("RWF"));
     }
 
 }
