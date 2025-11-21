@@ -52,9 +52,7 @@ jobs:
         echo "VERSION_TAG=$VERSION_TAG"
         
         IMAGE_TAG="${VERSION_TAG}.$(date '+%Y.%m.%d').${{ github.run_number }}"
-        if [[ "${{ env.SHOULD_PUBLISH }}" == 'true' ]]; then
-          IMAGE_TAG="$VERSION_TAG"
-        fi
+        
         echo "IMAGE_SEMANTIC_HASH=$IMAGE_TAG"
         echo "Tags: $IMAGE_TAG"
 
