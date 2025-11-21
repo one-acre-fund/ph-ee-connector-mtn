@@ -28,6 +28,7 @@ import org.mifos.connector.common.gsma.dto.Party;
 import org.mifos.connector.mtn.dto.ChannelValidationResponse;
 import org.mifos.connector.mtn.dto.Payer;
 import org.mifos.connector.mtn.dto.PaymentRequestDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -36,6 +37,9 @@ import org.springframework.util.StringUtils;
  */
 @Component
 public class MtnUtils {
+
+    @Value("#{${countryCurrency}}")
+    private static Map<String, String> countryCurrency;
 
     /**
      * Channel request converter.
@@ -202,8 +206,6 @@ public class MtnUtils {
         return Optional.ofNullable(exchange.getProperty(PLATFORM_TENANT_ID, String.class)).orElse(DEFAULT_TENANT);
     }
 
-    private static final Map<String, String> currencyToCountryMap = Map.of("ZMW", "zambia", "RWF", "rwanda");
-
     /**
      * Gets the country based on the currency.
      *
@@ -212,6 +214,6 @@ public class MtnUtils {
      * @return the country
      */
     public static String getCountryFromCurrency(String currency) {
-        return currencyToCountryMap.getOrDefault(currency, "rwanda");
+        return countryCurrency.getOrDefault(currency, "rwanda");
     }
 }

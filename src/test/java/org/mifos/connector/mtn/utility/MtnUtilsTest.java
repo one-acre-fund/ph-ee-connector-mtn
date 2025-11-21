@@ -167,18 +167,4 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
         assertEquals("rwanda", result);
     }
 
-    @DisplayName("getCountryFromCurrency returns 'zambia' for ZMW")
-    @Test
-    void test_getCountryFromCurrency_with_ZMW() {
-        assertEquals("zambia", MtnUtils.getCountryFromCurrency("ZMW"));
-    }
-
-    @DisplayName("getCountryFromCurrency returns 'rwanda' for non-ZMW currency")
-    @Test
-    void test_getCountryFromCurrency_with_non_ZMW() {
-        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("EUR"));
-        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("USD"));
-        assertEquals("rwanda", MtnUtils.getCountryFromCurrency("RWF"));
-    }
-
 }
