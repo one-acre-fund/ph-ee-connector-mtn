@@ -29,6 +29,8 @@ mtn:
     timeout: 60000
   max-retry-count: 2
 
+countryCurrency: '{"ZMW":"zambia","RWF":"rwanda","EUR":"zambia"}'
+
 logging:
   level:
     ROOT: INFO

@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils;
 public class MtnUtils {
 
     @Value("#{${countryCurrency}}")
-    private static Map<String, String> countryCurrency;
+    private Map<String, String> countryCurrency;
 
     /**
      * Channel request converter.
@@ -213,7 +213,7 @@ public class MtnUtils {
      *            the currency code
      * @return the country
      */
-    public static String getCountryFromCurrency(String currency) {
+    public String getCountryFromCurrency(String currency) {
         return countryCurrency.getOrDefault(currency, "rwanda");
     }
 }
