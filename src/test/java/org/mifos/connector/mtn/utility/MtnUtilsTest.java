@@ -18,8 +18,12 @@ import org.mifos.connector.common.gsma.dto.GsmaParty;
 import org.mifos.connector.common.mojaloop.dto.MoneyData;
 import org.mifos.connector.mtn.MtnConnectorApplicationTests;
 import org.mifos.connector.mtn.dto.PaymentRequestDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class MtnUtilsTest extends MtnConnectorApplicationTests {
+
+    @Autowired
+    private MtnUtils mtnUtils;
 
     @DisplayName("Convert valid transaction request with phone number without '+' prefix")
     @Test
@@ -165,6 +169,20 @@ class MtnUtilsTest extends MtnConnectorApplicationTests {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         String result = MtnUtils.getCountryFromExchange(exchange);
         assertEquals("rwanda", result);
+    }
+
+    @DisplayName("getCountryFromCurrency returns 'zambia' for ZMW")
+    @Test
+    void test_getCountryFromCurrency_with_ZMW() {
+        assertEquals("zambia", mtnUtils.getCountryFromCurrency("ZMW"));
+    }
+
+    @DisplayName("getCountryFromCurrency returns 'rwanda' for non-ZMW currency")
+    @Test
+    void test_getCountryFromCurrency_with_non_ZMW() {
+        assertEquals("zambia", mtnUtils.getCountryFromCurrency("EUR"));
+        assertEquals("rwanda", mtnUtils.getCountryFromCurrency("USD"));
+        assertEquals("rwanda", mtnUtils.getCountryFromCurrency("RWF"));
     }
 
 }
