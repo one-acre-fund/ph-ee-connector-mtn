@@ -16,18 +16,18 @@ zeebe:
     contactpoint: "localhost:26500"
 
 mtn:
-  auth-host: "https://sandbox.momodeveloper.mtn.com"
-  api-host: "https://sandbox.momodeveloper.mtn.com"
-  environment: "sandbox"
-  subscriptionKey: "xxxxxxxxxxxxxxxxx"
-  callBack: "http://helloyou.requestcatcher.com"
+  auth-host: ${MTNRW_AUTH_HOST:https://sandbox.momodeveloper.mtn.com}
+  api-host: ${MTNRW_API_HOST:https://sandbox.momodeveloper.mtn.com}
+  environment: ${MTNRW_ENVIRONMENT:sandbox}
+  subscriptionKey: ${MTNRW_SUBSCRIPTIONKEY:xxxxxxxxxxxxxxxxxx}
+  callBack: ${MTNRW_CALLBACK:http://helloyou.requestcatcher.com}
   country-config:
     rwanda:
-      client-key: "xxxxxxxxxxxxxxxxxx"
-      client-secret: "xxxxxxxxxxxxx"
+      client-key: ${MTNRW_CLIENT_KEY:xxxxxxxxxxxxxxxxxx}
+      client-secret: ${MTNRW_CLIENT_SECRET:xxxxxxxxxxxxxxxxxx}
     zambia:
-      client-key: "zambia"
-      client-secret: "xxxxxxxxxxxxx"
+      client-key: ${MTNZ_CLIENT_KEY:xxxxxxxxxxxxxxxxxx}
+      client-secret: ${MTNZ_CLIENT_SECRET:xxxxxxxxxxxxxxxxxx}
   api:
     timeout: 60000
   max-retry-count: 2
