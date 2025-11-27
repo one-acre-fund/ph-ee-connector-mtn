@@ -64,9 +64,6 @@ public class AuthRoutes extends RouteBuilder {
                     String country = getCountryFromExchange(exchange);
                     logger.info("Tenant in Route " + country);
                     MtnProps.MtnCountryCreds countryCredentials = mtnProps.getCountryConfig().get(country);
-                    logger.info("Tenant clientId " + countryCredentials.getClientKey());
-                    logger.info("Tenant clientsecret " + countryCredentials.getClientSecret());
-                    logger.info("Tenant subscriptionKey " + mtnProps.getSubscriptionKey());
                     String authHeader = createBasicAuthHeaderValue(countryCredentials.getClientKey(),
                             countryCredentials.getClientSecret());
                     exchange.getIn().setHeader("Authorization", authHeader);
